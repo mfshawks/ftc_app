@@ -76,7 +76,7 @@ public class Mecanum1
     public final static double CLAW_MIN_RANGE  = 0.0; // 0-> I; 0.5-> ---
     public final static double CLAW_MAX_RANGE  = 0.5;
     public final static double HAND_MIN_RANGE  = 0.8; // 0.8->/\; 0.9-> \/;
-    public final static double HAND_MAX_RANGE  = 0.9;
+    public final static double HAND_MAX_RANGE  = 1.0;
 
     /* Local OpMode members. */
     HardwareMap hwMap  = null;

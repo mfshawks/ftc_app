@@ -62,7 +62,7 @@ public class MecanumTeleop extends LinearOpMode {
 
     final double    CLAW_SPEED      = 0.05 ;                            // sets rate to move servo
     final double    ARM_SPEED       = 0.05  ;
-    final double    HAND_SPEED      = 0.01; // sets rate to move servo
+    final double    HAND_SPEED      = 0.1; // sets rate to move servo
     double          lift            = 0.2;
     //private ElapsedTime runtime = new ElapsedTime();
 
@@ -111,6 +111,7 @@ public class MecanumTeleop extends LinearOpMode {
             liftdown = gamepad1.right_trigger;
 
 //            Use gamepad left & right trigger raise and lower the lift motor.
+            // az
             robot.liftM.setPower(liftup-liftdown);
 
 
@@ -145,9 +146,9 @@ public class MecanumTeleop extends LinearOpMode {
             robot.Lclaw.setPosition(clawPosition);
 
 
-            if (gamepad1.dpad_up)
+            if (gamepad1.dpad_down)
                 robot.tiltMotor.setPower(0.5);
-            else if (gamepad1.dpad_down)
+            else if (gamepad1.dpad_up)
                 robot.tiltMotor.setPower(-0.5);
             else
                 robot.tiltMotor.setPower(0.0);
