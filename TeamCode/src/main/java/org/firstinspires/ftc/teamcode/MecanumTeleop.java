@@ -61,7 +61,8 @@ public class MecanumTeleop extends LinearOpMode {
     double          handPosition    = Mecanum1.HAND_HOME;                  // Servo safe position
 
     final double    CLAW_SPEED      = 0.05 ;                            // sets rate to move servo
-    final double    ARM_SPEED       = 0.05  ;                            // sets rate to move servo
+    final double    ARM_SPEED       = 0.05  ;
+    final double    HAND_SPEED      = 0.1; // sets rate to move servo
     double          lift            = 0.2;
     //private ElapsedTime runtime = new ElapsedTime();
 
@@ -110,50 +111,59 @@ public class MecanumTeleop extends LinearOpMode {
             liftdown = gamepad1.right_trigger;
 
 //            Use gamepad left & right trigger raise and lower the lift motor.
+            // az
             robot.liftM.setPower(liftup-liftdown);
 
 
 
-            // Use gamepad Y & A raise and lower the arm
-            if (gamepad1.a)
-                armPosition += ARM_SPEED;
-            else if (gamepad1.y)
+            // Use gamepad x & b move hands in and out
+            if (gamepad1.x)
+                handPosition += HAND_SPEED;
+            else if (gamepad1.b)
+                handPosition -= HAND_SPEED;
+
+            handPosition = Range.clip(handPosition, Mecanum1.HAND_MIN_RANGE, Mecanum1.HAND_MAX_RANGE);
+            robot.LHand.setPosition(handPosition);
+            robot.RHand.setPosition(handPosition);
+
+            // MrO code Use gamepad right bump & left bump to raise and lower the arm
+            if (gamepad1.right_bumper)
+                 armPosition += ARM_SPEED;
+            else if (gamepad1.left_bumper)
                 armPosition -= ARM_SPEED;
 
-            // Use gamepad X & B to open and close the claw
-            if (gamepad1.x)
+            armPosition  = Range.clip(armPosition, Mecanum1.ARM_MIN_RANGE, Mecanum1.ARM_MAX_RANGE);
+            robot.arm.setPosition(armPosition);
+
+            // Use gamepad a & y move claw up and down
+            if (gamepad1.a)
                 clawPosition += CLAW_SPEED;
-            else if (gamepad1.b)
+            else if (gamepad1.y)
                 clawPosition -= CLAW_SPEED;
 
-            //MrO Added Use gamepad right bumper & left bumper to open and close the claw
-            if (gamepad1.right_bumper)
-                handPosition += CLAW_SPEED;
-            else if (gamepad1.left_bumper)
-                handPosition -= CLAW_SPEED;
+            clawPosition = Range.clip(clawPosition, Mecanum1.CLAW_MIN_RANGE, Mecanum1.CLAW_MAX_RANGE);
+            robot.Rclaw.setPosition(clawPosition);
+            robot.Lclaw.setPosition(clawPosition);
 
-            if (gamepad1.dpad_up)
+
+            if (gamepad1.dpad_down)
                 robot.tiltMotor.setPower(0.5);
-            else if (gamepad1.dpad_down)
+            else if (gamepad1.dpad_up)
                 robot.tiltMotor.setPower(-0.5);
             else
                 robot.tiltMotor.setPower(0.0);
 
-            // Move both servos to new position.  MrO Added hand code
-            armPosition  = Range.clip(armPosition, Mecanum1.ARM_MIN_RANGE, Mecanum1.ARM_MAX_RANGE);
-            robot.arm.setPosition(armPosition);
-            handPosition = Range.clip(handPosition,Mecanum1.HAND_MIN_RANGE, Mecanum1.HAND_MAX_RANGE);
-            robot.LHand.setPosition(handPosition);
-            robot.RHand.setPosition(handPosition);
-            clawPosition = Range.clip(clawPosition, Mecanum1.CLAW_MIN_RANGE, Mecanum1.CLAW_MAX_RANGE);
-            robot.Rclaw.setPosition(clawPosition);
-            robot.Lclaw.setPosition(clawPosition);
+            // Move both servos to new position. MrO Added Hand  code
+
+
 
 
             // Send telemetry message to signify robot running;
             telemetry.addData("arm",   "%.2f", armPosition);
             telemetry.addData("Rclaw",  "%.2f", clawPosition);
             telemetry.addData("Lclaw",  "%.2f", clawPosition);
+            telemetry.addData("Rhand",  "%.2f", handPosition);
+            telemetry.addData("Lhand",  "%.2f", handPosition);
 
             telemetry.addData("LFMotor",   "%.2f", robot.LFMotor.getPower());
             telemetry.addData("LRMotor",  "%.2f", robot.LRMotor.getPower());

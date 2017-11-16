@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -51,23 +50,28 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="MFSbot Telop")
+@TeleOp(name="MecanumTelopMrO")
 //@Disabled
-public class MFSbotTeleop extends LinearOpMode {
+public class MecanumTeleopMrO extends LinearOpMode {
 
     /* Declare OpMode members. */
-    MFSbot   robot           = new MFSbot();              //
-    double          armPosition     = robot.ARM_HOME;                   // Servo safe position
-    double          clawPosition    = robot.CLAW_HOME;                  // Servo safe position
+    Mecanum1   robot           = new Mecanum1();              //
+    double          armPosition     = Mecanum1.ARM_HOME;                   // Servo safe position
+    double          clawPosition    = Mecanum1.CLAW_HOME;                  // Servo safe position
+    double          handPosition    = Mecanum1.HAND_HOME;                  // Servo safe position
+
     final double    CLAW_SPEED      = 0.05 ;                            // sets rate to move servo
-    final double    ARM_SPEED       = 0.05  ;                            // sets rate to move servo
+    final double    ARM_SPEED       = 0.05  ;
+    final double    HAND_SPEED      = 0.1; // sets rate to move servo
     double          lift            = 0.2;
-    private ElapsedTime runtime = new ElapsedTime();
+    //private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
-        double left;
-        double right;
+        double LFspeed;
+        double RFspeed;
+        double LRspeed;
+        double RRspeed;
         double liftup;
         double liftdown;
 
@@ -87,67 +91,85 @@ public class MFSbotTeleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Run wheels in tank mode (note: The joystick goes negative when pushed forwards, so negate it)
-            left = -gamepad1.left_stick_y;
-            right = -gamepad1.right_stick_y;
+            LFspeed = -gamepad1.right_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x;
+            LRspeed = -gamepad1.right_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x;
+            RFspeed = -gamepad1.right_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x;
+            RRspeed = -gamepad1.right_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x;
 
-            robot.leftM.setPower(left);
-            robot.rightM.setPower(right);
+            LFspeed = Range.clip(LFspeed, -1, 1);
+            LRspeed = Range.clip(LRspeed, -1, 1);
+            RFspeed = Range.clip(RFspeed, -1, 1);
+            RRspeed = Range.clip(RRspeed, -1, 1);
 
-            liftup = gamepad1.left_trigger;
-            liftdown = gamepad1.right_trigger;
 
-            robot.liftM.setPower(liftup);
-            robot.liftM.setPower(-liftdown);
+            robot.LFMotor.setPower(LFspeed);
+            robot.RFMotor.setPower(RFspeed);
+            robot.LRMotor.setPower(LRspeed);
+            robot.RRMotor.setPower(RRspeed);
 
-            // Use gamepad Y & A raise and lower the arm
-            if (gamepad1.a)
-                armPosition += ARM_SPEED;
-            else if (gamepad1.y)
+            liftup = gamepad2.left_trigger;
+            liftdown = gamepad2.right_trigger;
+
+//            Use gamepad left & right trigger raise and lower the lift motor.
+            // az
+            robot.liftM.setPower(liftup-liftdown);
+
+
+
+            // Use gamepad x & b move hands in and out
+            if (gamepad2.x)
+                handPosition += HAND_SPEED;
+            else if (gamepad2.b)
+                handPosition -= HAND_SPEED;
+
+            handPosition = Range.clip(handPosition, Mecanum1.HAND_MIN_RANGE, Mecanum1.HAND_MAX_RANGE);
+            robot.LHand.setPosition(handPosition);
+            robot.RHand.setPosition(handPosition);
+
+            // MrO code Use gamepad right bump & left bump to raise and lower the arm
+            if (gamepad2.right_bumper)
+                 armPosition += ARM_SPEED;
+            else if (gamepad2.left_bumper)
                 armPosition -= ARM_SPEED;
 
-            // Use gamepad X & B to open and close the claw
-            if (gamepad1.x)
+            armPosition  = Range.clip(armPosition, Mecanum1.ARM_MIN_RANGE, Mecanum1.ARM_MAX_RANGE);
+            robot.arm.setPosition(armPosition);
+
+            // Use gamepad a & y move claw up and down
+            if (gamepad2.a)
                 clawPosition += CLAW_SPEED;
-            else if (gamepad1.b)
+            else if (gamepad2.y)
                 clawPosition -= CLAW_SPEED;
 
-            // Move both servos to new position.
-            armPosition  = Range.clip(armPosition, robot.ARM_MIN_RANGE, robot.ARM_MAX_RANGE);
-            robot.arm.setPosition(armPosition);
-            clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
+            clawPosition = Range.clip(clawPosition, Mecanum1.CLAW_MIN_RANGE, Mecanum1.CLAW_MAX_RANGE);
             robot.Rclaw.setPosition(clawPosition);
             robot.Lclaw.setPosition(clawPosition);
-/*
-            if (gamepad1.left_bumper){
-                robot.liftM.setPower(lift);
-               // while (opModeIsActive() && (runtime.seconds() < 0.3)) {}
-               // robot.liftM.setPower(0);
-            }
 
-            if (gamepad1.left_trigger){
-                robot.liftM.setPower(0);
-            }
 
-            if (gamepad1.right_bumper){
-                robot.liftM.setPower(-lift);
-               // while (opModeIsActive() && (runtime.seconds() < 0.3)) {}
-               // robot.liftM.setPower(0);
-            }
+            if (gamepad2.dpad_down)
+                robot.tiltMotor.setPower(0.5);
+            else if (gamepad2.dpad_up)
+                robot.tiltMotor.setPower(-0.5);
+            else
+                robot.tiltMotor.setPower(0.0);
 
-            if (gamepad1.right_trigger){
-                robot.liftM.setPower(0);
-            }
-*/
+            // Move both servos to new position. MrO Added Hand  code
+
+
+
+
             // Send telemetry message to signify robot running;
             telemetry.addData("arm",   "%.2f", armPosition);
             telemetry.addData("Rclaw",  "%.2f", clawPosition);
             telemetry.addData("Lclaw",  "%.2f", clawPosition);
-            telemetry.addData("left",  "%.2f", left);
-            telemetry.addData("right", "%.2f", right);
-            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
-            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
-            telemetry.update();
+            telemetry.addData("Rhand",  "%.2f", handPosition);
+            telemetry.addData("Lhand",  "%.2f", handPosition);
 
+            telemetry.addData("LFMotor",   "%.2f", robot.LFMotor.getPower());
+            telemetry.addData("LRMotor",  "%.2f", robot.LRMotor.getPower());
+            telemetry.addData("RFMotor",  "%.2f", robot.RFMotor.getPower());
+            telemetry.addData("RRMotor",  "%.2f", robot.RRMotor.getPower());
+            telemetry.update();
             // Pause for 40 mS each cycle = update 25 times a second.
             sleep(40);
         }
