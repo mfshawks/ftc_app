@@ -112,7 +112,7 @@ public class MecanumTeleopMrO extends LinearOpMode {
 
 //            Use gamepad left & right trigger raise and lower the lift motor.
             // az
-            robot.liftM.setPower(liftup-liftdown);
+            robot.liftMotor.setPower(liftup-liftdown);
 
 
 

@@ -33,6 +33,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 @Autonomous(name="Mecanum Auto Blue")
 public class MecanumAutoBlue extends LinearOpMode {
 
@@ -57,7 +59,7 @@ public class MecanumAutoBlue extends LinearOpMode {
         robot.RFMotor.setPower(0);
         robot.LRMotor.setPower(0);
         robot.RRMotor.setPower(0);
-        robot.arm.setPosition(-0.1);
+        robot.arm.setPosition(0.0);
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
@@ -67,9 +69,58 @@ public class MecanumAutoBlue extends LinearOpMode {
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
-        robot.arm.setPosition(0.7);
+
+//        robot.Lclaw.setPosition(0.5);
+//        robot.Rclaw.setPosition(0.5);
+//        robot.LHand.setPosition(0.9);
+//        robot.RHand.setPosition(0.9);
+//        runtime.reset();
+//        while (opModeIsActive() && (runtime.seconds() < 0.30)) {
+//            telemetry.addData("Path", "Move hand down: %2.5f S Elapsed", runtime.seconds());
+//            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+//            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+//            telemetry.update();
+//        }
+//
+//        robot.LHand.setPosition(0.8);
+//        robot.RHand.setPosition(0.8);
+//        runtime.reset();
+//        while (opModeIsActive() && (runtime.seconds() < 0.30)) {
+//            telemetry.addData("Path", "Move Claw in: %2.5f S Elapsed", runtime.seconds());
+//            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+//            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+//            telemetry.update();
+//        }
+//
+//        robot.liftMotor.setPower(-1.0);
+//        runtime.reset();
+//        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+//            telemetry.addData("Path", "Move LiftMotor up: %2.5f S Elapsed", runtime.seconds());
+//            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+//            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+//            telemetry.update();
+//        }
+
+        robot.liftMotor.setPower(0.0);
+        robot.LFMotor.setPower(0.3);
+        robot.LRMotor.setPower(-0.3);
+        robot.RFMotor.setPower(-0.3);
+        robot.RRMotor.setPower(0.3);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.20)) {
+            telemetry.addData("Path", "Move to the right: %2.5f S Elapsed", runtime.seconds());
+            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            telemetry.update();
+        }
+
+        robot.arm.setPosition(0.95);
+        robot.LFMotor.setPower(0);
+        robot.LRMotor.setPower(0);
+        robot.RFMotor.setPower(0);
+        robot.RRMotor.setPower(0);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Move arm: %2.5f S Elapsed", runtime.seconds());
             telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
             telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
@@ -79,12 +130,12 @@ public class MecanumAutoBlue extends LinearOpMode {
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
         if (isRed) {
             // Move forward
-            robot.LRMotor.setPower(-1.0);
-            robot.RRMotor.setPower(-1.0);
-            robot.LFMotor.setPower(-1.0);
-            robot.RFMotor.setPower(-1.0);
+            robot.LRMotor.setPower(1.0);
+            robot.RRMotor.setPower(1.0);
+            robot.LFMotor.setPower(1.0);
+            robot.RFMotor.setPower(1.0);
             runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 2)) {
+            while (opModeIsActive() && (runtime.seconds() < 0.5)) {
                 telemetry.addData("Path", "Kick Ball: %2.5f S Elapsed", runtime.seconds());
                 telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
                 telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
@@ -97,7 +148,7 @@ public class MecanumAutoBlue extends LinearOpMode {
             robot.LFMotor.setPower(-1.0);
             robot.RFMotor.setPower(-1.0);
             runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 2)) {
+            while (opModeIsActive() && (runtime.seconds() < 0.5)) {
                 telemetry.addData("Path", "Kick Ball: %2.5f S Elapsed", runtime.seconds());
                 telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
                 telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
@@ -105,25 +156,45 @@ public class MecanumAutoBlue extends LinearOpMode {
             }
         }
 
+        robot.arm.setPosition(0.0);
+        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
+            telemetry.addData("Path", "arm up: %2.5f S Elapsed", runtime.seconds());
+            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            telemetry.update();
+        }
+
         robot.LRMotor.setPower(-1.0);
         robot.RRMotor.setPower(-1.0);
         robot.LFMotor.setPower(-1.0);
         robot.RFMotor.setPower(-1.0);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 2)) {
+        double extraTime = isRed ? 0.5 : -0.5;
+        while (opModeIsActive() && (runtime.seconds() < (1.0 + extraTime))) {
             telemetry.addData("Path", "Kick Ball: %2.5f S Elapsed", runtime.seconds());
             telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
             telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
             telemetry.update();
         }
 
+        robot.LFMotor.setPower(-0.8);
+        robot.LRMotor.setPower(0.8);
+        robot.RFMotor.setPower(0.8);
+        robot.RRMotor.setPower(-0.8);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 0.6)) {
+            telemetry.addData("Path", "Move left: %2.5f S Elapsed", runtime.seconds());
+            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            telemetry.update();
+        }
 
         // Step 4:  Stop and close the claw.
         robot.LFMotor.setPower(0);
         robot.RFMotor.setPower(0);
         robot.RRMotor.setPower(0);
         robot.LRMotor.setPower(0);
-        robot.arm.setPosition(-0.1);
+        robot.arm.setPosition(0.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

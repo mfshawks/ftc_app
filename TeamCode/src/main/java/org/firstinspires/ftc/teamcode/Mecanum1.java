@@ -29,7 +29,9 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -59,20 +61,22 @@ public class Mecanum1
     public DcMotor RFMotor = null;
     public DcMotor LRMotor  = null;
     public DcMotor RRMotor = null;
-    public DcMotor liftM   = null;
+    public DcMotor liftMotor   = null;
     public DcMotor tiltMotor = null;
     public Servo arm         = null;
     public Servo Lclaw        = null;
     public Servo Rclaw        = null;
     public Servo LHand        = null;
     public Servo RHand        = null;
+    public ColorSensor armColorSensor = null;
+    public DistanceSensor armDistanceSensor = null;
 
 
     public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
     public final static double CLAW_HOME = 0.1;
     public final static double HAND_HOME = 0.8;
     public final static double ARM_MIN_RANGE  = 0.00;
-    public final static double ARM_MAX_RANGE  = 0.70;
+    public final static double ARM_MAX_RANGE  = 1.0;
     public final static double CLAW_MIN_RANGE  = 0.0; // 0-> I; 0.5-> ---
     public final static double CLAW_MAX_RANGE  = 0.5;
     public final static double HAND_MIN_RANGE  = 0.8; // 0.8->/\; 0.9-> \/;
@@ -84,7 +88,7 @@ public class Mecanum1
 
     /* Constructor */
     public Mecanum1() {
-        LRMotor = null;
+
     }
 
     /* Initialize standard Hardware interfaces */
@@ -100,7 +104,7 @@ public class Mecanum1
         LRMotor = hwMap.get(DcMotor.class, "LRMotor");
         RRMotor = hwMap.get(DcMotor.class, "RRMotor");
         LRMotor.setDirection(DcMotor.Direction.REVERSE);
-        liftM = hwMap.get(DcMotor.class, "LiftMotor");
+        liftMotor = hwMap.get(DcMotor.class, "LiftMotor");
         tiltMotor = hwMap.get(DcMotor.class, "tiltMotor");
 
         //  liftM  = hwMap.get(DcMotor.class, "liftM");
@@ -110,7 +114,7 @@ public class Mecanum1
         LRMotor.setPower(0);
         RRMotor.setPower(0);
         tiltMotor.setPower(0);
-        liftM.setPower(0);
+        liftMotor.setPower(0);
 
 
         // Set all motors to run without encoders.
@@ -128,6 +132,9 @@ public class Mecanum1
         Rclaw = hwMap.get(Servo.class, "RClaw");
         LHand = hwMap.get(Servo.class, "LHand");
         RHand = hwMap.get(Servo.class, "RHand");
+
+        armColorSensor = hwMap.get(ColorSensor.class, "acs");
+        armDistanceSensor = hwMap.get(DistanceSensor.class, "acs");
 
         LHand.setDirection(Servo.Direction.REVERSE);
         Lclaw.setDirection(Servo.Direction.REVERSE);
