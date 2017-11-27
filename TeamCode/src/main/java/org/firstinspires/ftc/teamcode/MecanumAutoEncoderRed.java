@@ -76,9 +76,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Pushbot")
+@Autonomous(name="Pushbot: Auto Drive By Encoder")
 @Disabled
-public class MecanumAutoEncoder extends LinearOpMode {
+public class MecanumAutoEncoderRed extends LinearOpMode {
 
     /* Declare OpMode members. */
     Mecanum1 robot   = new Mecanum1();   // Use a Pushbot's hardware
@@ -193,9 +193,20 @@ public class MecanumAutoEncoder extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDriveMove(DRIVE_SPEED, direction.RIGHT, 3, 5);
+        // Step through each leg of the path
+        encoderDriveMove(DRIVE_SPEED, direction.RIGHT, 1, 3);
+
+        encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 1, 3);
+
+        robot.arm.setPosition(0.95);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+            telemetry.addData("Path", "Move arm: %2.5f S Elapsed", runtime.seconds());
+            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            telemetry.update();
+        }
+
 
         switch (column) {
             case RIGHT:
