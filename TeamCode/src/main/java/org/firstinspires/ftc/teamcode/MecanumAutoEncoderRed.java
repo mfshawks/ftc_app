@@ -113,12 +113,14 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.LRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.RRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",
@@ -149,12 +151,22 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
 
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
+
+        robot.RHand.setPosition(0.87); //arm | |
+        robot.LHand.setPosition(0.87);
+        robot.Lclaw.setPosition(0.0); //arm up
+        robot.Rclaw.setPosition(0.0);
         waitForStart();
+//>>>>>>>>>>>>>>>>>>>>>>>>>>START>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
         relicTrackables.activate();
 
         RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
-        while (opModeIsActive()) {
+
+        runtime.reset();
+        robot.Lclaw.setPosition(0.5);
+        robot.Rclaw.setPosition(0.5);
+        while (opModeIsActive() && runtime.seconds() < 3.0) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
@@ -194,41 +206,52 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         }
 
         // Step through each leg of the path
-        encoderDriveMove(DRIVE_SPEED, direction.RIGHT, 1, 3);
-
-        encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 1, 3);
+        robot.RHand.setPosition(0.80);
+        robot.LHand.setPosition(0.80);
+        encoderDriveMove(0.3, direction.RIGHT, 3, 3);
 
         robot.arm.setPosition(0.95);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Move arm: %2.5f S Elapsed", runtime.seconds());
+            telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
             telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
             telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
             telemetry.update();
         }
 
+        boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
+        double forwardInch = 24; // The distance to move forward afterward
+        if (isRed) {
+            // Move back
+            encoderDriveMove(0.3, direction.BACKWARD, 1, 1);
+            forwardInch += 1;
+        } else {
+            // Move forward
+            encoderDriveMove(0.3, direction.FORWARD, 1, 1);
+            forwardInch -= 1;
+        }
 
+        encoderDriveMove(1.0, direction.FORWARD, forwardInch, 5);
+
+        double distanceToTheLeft = 15.5;
         switch (column) {
             case RIGHT:
+                distanceToTheLeft = 7.5;
                 break;
             case LEFT:
+                distanceToTheLeft = 23.5;
                 break;
             case CENTER:
+                distanceToTheLeft = 15.5;
                 break;
             case UNKNOWN:
                 break;
         }
 
-//        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-//        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-//        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        encoderDriveMove(0.5, direction.LEFT, distanceToTheLeft, 5);
 
-//        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-//        robot.rightClaw.setPosition(0.0);
-//        sleep(1000);     // pause for servos to move
-//
-//        telemetry.addData("Path", "Complete");
-//        telemetry.update();
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
     }
 
     public enum direction {
