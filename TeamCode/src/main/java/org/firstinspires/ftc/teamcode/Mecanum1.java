@@ -119,10 +119,10 @@ public class Mecanum1
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        LFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        LRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        RRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //liftM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

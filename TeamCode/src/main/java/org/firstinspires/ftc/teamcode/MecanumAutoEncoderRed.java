@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -49,35 +48,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
-/**
- * This file illustrates the concept of driving a path based on encoder counts.
- * It uses the common Pushbot hardware class to define the drive on the robot.
- * The code is structured as a LinearOpMode
- *
- * The code REQUIRES that you DO have encoders on the wheels,
- *   otherwise you would use: PushbotAutoDriveByTime;
- *
- *  This code ALSO requires that the drive Motors have been configured such that a positive
- *  power command moves them forwards, and causes the encoders to count UP.
- *
- *   The desired path in this example is:
- *   - Drive forward for 48 inches
- *   - Spin right for 12 Inches
- *   - Drive Backwards for 24 inches
- *   - Stop and close the claw.
- *
- *  The code is written using a method called: encoderDrive(speed, leftInches, rightInches, timeoutS)
- *  that performs the actual movement.
- *  This methods assumes that each movement is relative to the last stopping place.
- *  There are other ways to perform encoder based moves, but this method is probably the simplest.
- *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder")
-@Disabled
+
+@Autonomous(name="M Encoder Red")
 public class MecanumAutoEncoderRed extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -128,6 +101,15 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
                           robot.RRMotor.getCurrentPosition());
         telemetry.update();
 
+        robot.LFMotor.setPower(0);
+        robot.RFMotor.setPower(0);
+        robot.LRMotor.setPower(0);
+        robot.RRMotor.setPower(0);
+        robot.arm.setPosition(0.0);
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Ready to run");    //
+        telemetry.update();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -142,7 +124,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
                 "hCO5Gb3BN+DtyUmrHM4oALhoMFgqRw59plwzxfD45Uzfyu6Jn2k7LPTCqs94SpprMfOqOotLtBHx" +
                 "T19Rkl5toHI5buxqLlQDOX8y/jQ";
 
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
 
         VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
@@ -205,12 +187,12 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             telemetry.update();
         }
 
-        // Step through each leg of the path
         robot.RHand.setPosition(0.80);
         robot.LHand.setPosition(0.80);
-        encoderDriveMove(0.3, direction.RIGHT, 3, 3);
+        //encoderDriveMove(0.3, direction.RIGHT, 3, 3);
 
         robot.arm.setPosition(0.95);
+        liftMotorDrive(1.0, 10, 5);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
@@ -345,6 +327,55 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+        }
+    }
+
+
+
+    public void liftMotorDrive(double speed,
+                                 double distanceInInch,
+                                 double timeoutS) {
+        int newLiftTarget = 0;
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+            newLiftTarget = robot.liftMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
+            // Determine new target position, and pass to motor controller
+
+            robot.liftMotor.setTargetPosition(newLiftTarget);
+
+            // Turn On RUN_TO_POSITION
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.liftMotor.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.LRMotor.isBusy() || robot.RRMotor.isBusy()) || robot.LFMotor.isBusy() || robot.LRMotor.isBusy()) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1",  "Lift mptor running to %7d", newLiftTarget);
+                telemetry.addData("Path2",  "Running at %7d",
+                        robot.liftMotor.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.liftMotor.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
