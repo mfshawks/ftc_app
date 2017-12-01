@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
@@ -85,6 +86,20 @@ public class MecanumTeleopMrO extends LinearOpMode {
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
+
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
+
+        robot.LFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.LRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.RRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
@@ -165,13 +180,14 @@ public class MecanumTeleopMrO extends LinearOpMode {
             telemetry.addData("Rhand",  "%.2f", handPosition);
             telemetry.addData("Lhand",  "%.2f", handPosition);
 
-            telemetry.addData("LFMotor",   "%.2f", robot.LFMotor.getPower());
-            telemetry.addData("LRMotor",  "%.2f", robot.LRMotor.getPower());
-            telemetry.addData("RFMotor",  "%.2f", robot.RFMotor.getPower());
-            telemetry.addData("RRMotor",  "%.2f", robot.RRMotor.getPower());
+            telemetry.addData("LFMotor",   "%03d", robot.LFMotor.getCurrentPosition());
+            telemetry.addData("LRMotor",  "%03d", robot.LRMotor.getCurrentPosition());
+            telemetry.addData("RFMotor",  "%03d", robot.RFMotor.getCurrentPosition());
+            telemetry.addData("RRMotor",  "%03d", robot.RRMotor.getCurrentPosition());
             telemetry.update();
             // Pause for 40 mS each cycle = update 25 times a second.
             sleep(40);
+
         }
     }
 }

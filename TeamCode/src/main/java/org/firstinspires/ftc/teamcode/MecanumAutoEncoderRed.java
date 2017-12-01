@@ -57,7 +57,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
     Mecanum1 robot   = new Mecanum1();   // Use a Pushbot's hardware
     private ElapsedTime runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 420 ;    // eg: TETRIX Motor Encoder
+    static final double     COUNTS_PER_MOTOR_REV    = 1718 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -134,8 +134,8 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
 
-        robot.RHand.setPosition(0.87); //arm | |
-        robot.LHand.setPosition(0.87);
+        robot.RHand.setPosition(0.8); //arm \ /
+        robot.LHand.setPosition(0.8);
         robot.Lclaw.setPosition(0.0); //arm up
         robot.Rclaw.setPosition(0.0);
         waitForStart();
@@ -187,12 +187,12 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.RHand.setPosition(0.80);
-        robot.LHand.setPosition(0.80);
+        robot.RHand.setPosition(1.0);
+        robot.LHand.setPosition(1.0);
         //encoderDriveMove(0.3, direction.RIGHT, 3, 3);
 
-        robot.arm.setPosition(0.95);
-        liftMotorDrive(1.0, 10, 5);
+        robot.arm.setPosition(0.7);
+        liftMotorDrive(1.0, 20, 5);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
@@ -202,18 +202,19 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double forwardInch = 24; // The distance to move forward afterward
+        double backwardInch = 24; // The distance to move forward afterward
         if (isRed) {
             // Move back
-            encoderDriveMove(0.3, direction.BACKWARD, 1, 1);
-            forwardInch += 1;
+            encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
+            backwardInch -= 3;
         } else {
             // Move forward
-            encoderDriveMove(0.3, direction.FORWARD, 1, 1);
-            forwardInch -= 1;
+            encoderDriveMove(0.3, direction.FORWARD, 3, 1);
+            backwardInch += 3;
         }
 
-        encoderDriveMove(1.0, direction.FORWARD, forwardInch, 5);
+        robot.arm.setPosition(0.0);
+        encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
 
         double distanceToTheLeft = 15.5;
         switch (column) {
@@ -230,7 +231,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
                 break;
         }
 
-        encoderDriveMove(0.5, direction.LEFT, distanceToTheLeft, 5);
+        encoderDriveMove(0.5, direction.RIGHT, distanceToTheLeft, 5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -306,7 +307,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (robot.LRMotor.isBusy() || robot.RRMotor.isBusy()) || robot.LFMotor.isBusy() || robot.LRMotor.isBusy()) {
+                   robot.LRMotor.isBusy() && robot.LFMotor.isBusy() && robot.LRMotor.isBusy()) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newRightFrontTarget,  newLeftFrontTarget);
@@ -342,17 +343,17 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-            newLiftTarget = robot.liftMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
+            newLiftTarget = robot.tiltMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
             // Determine new target position, and pass to motor controller
 
-            robot.liftMotor.setTargetPosition(newLiftTarget);
+            robot.tiltMotor.setTargetPosition(newLiftTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.liftMotor.setPower(Math.abs(speed));
+            robot.tiltMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -362,20 +363,20 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (robot.LRMotor.isBusy() || robot.RRMotor.isBusy()) || robot.LFMotor.isBusy() || robot.LRMotor.isBusy()) {
+                    robot.tiltMotor.isBusy()) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Lift mptor running to %7d", newLiftTarget);
                 telemetry.addData("Path2",  "Running at %7d",
-                        robot.liftMotor.getCurrentPosition());
+                        robot.tiltMotor.getCurrentPosition());
                 telemetry.update();
             }
 
             // Stop all motion;
-            robot.liftMotor.setPower(0);
+            robot.tiltMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }

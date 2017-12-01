@@ -128,6 +128,7 @@ public class Mecanum1
 
         // Define and initialize ALL installed servos.
         arm  = hwMap.get(Servo.class, "arm");
+        arm.setDirection(Servo.Direction.REVERSE);
         Lclaw = hwMap.get(Servo.class, "LClaw");
         Rclaw = hwMap.get(Servo.class, "RClaw");
         LHand = hwMap.get(Servo.class, "LHand");

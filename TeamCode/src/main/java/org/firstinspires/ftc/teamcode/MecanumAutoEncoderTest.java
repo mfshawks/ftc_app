@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * This program moves robot forward 5 inches.
+ * This program moves robot forward 20 inches.
  */
 
 @Autonomous(name="MEncoderTest")
@@ -50,7 +50,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
      * It is a 7 pulse per revolution (ppr), hall effect encoder.
      * Since the motor's gearbox has a 60:1 reduction, then the NeverRest 60 output shaft provides 420 ppr.
      */
-    static final double     COUNTS_PER_MOTOR_REV    = 420 ;
+    static final double     COUNTS_PER_MOTOR_REV    = 1432;
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -86,7 +86,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
 
 
         // Step through each leg of the path
-        encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 5, 3);
+        encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 20, 20);
     }
 
     public enum direction {
@@ -148,7 +148,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
             runtime.reset();
             robot.LRMotor.setPower(Math.abs(speed));
             robot.LFMotor.setPower(Math.abs(speed));
-            robot.RRMotor.setPower(Math.abs(speed));
+        robot.RRMotor.setPower(Math.abs(speed));
             robot.RFMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
@@ -159,7 +159,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (robot.LRMotor.isBusy() && robot.RRMotor.isBusy()) && robot.LFMotor.isBusy() && robot.RFMotor.isBusy()) {
+                   robot.LRMotor.isBusy() && robot.LFMotor.isBusy() && robot.RFMotor.isBusy() && robot.RRMotor.isBusy()) {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "Running to %7d :%7d", newRightFrontTarget,  newLeftFrontTarget);
