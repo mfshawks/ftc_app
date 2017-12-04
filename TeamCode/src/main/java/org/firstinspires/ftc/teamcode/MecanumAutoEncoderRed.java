@@ -42,7 +42,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
@@ -83,14 +82,14 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.LRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.RRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.tiltMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
         robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",

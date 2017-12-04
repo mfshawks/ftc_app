@@ -112,7 +112,7 @@ public class MecanumTeleop extends LinearOpMode {
 
 //            Use gamepad left & right trigger raise and lower the lift motor.
             // az
-            robot.liftMotor.setPower(liftup-liftdown);
+            robot.tiltMotor.setPower(liftup-liftdown);
 
 
 
@@ -147,11 +147,11 @@ public class MecanumTeleop extends LinearOpMode {
 
 
             if (gamepad1.dpad_down)
-                robot.tiltMotor.setPower(0.5);
+                robot.liftMotor.setPower(0.5);
             else if (gamepad1.dpad_up)
-                robot.tiltMotor.setPower(-0.5);
+                robot.liftMotor.setPower(-0.5);
             else
-                robot.tiltMotor.setPower(0.0);
+                robot.liftMotor.setPower(0.0);
 
             // Move both servos to new position. MrO Added Hand  code
 

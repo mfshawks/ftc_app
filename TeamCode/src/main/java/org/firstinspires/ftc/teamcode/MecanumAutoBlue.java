@@ -33,8 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 @Autonomous(name="Mecanum Auto Blue")
 public class MecanumAutoBlue extends LinearOpMode {
 
@@ -92,7 +90,7 @@ public class MecanumAutoBlue extends LinearOpMode {
 //            telemetry.update();
 //        }
 //
-//        robot.liftMotor.setPower(-1.0);
+//        robot.tiltMotor.setPower(-1.0);
 //        runtime.reset();
 //        while (opModeIsActive() && (runtime.seconds() < 0.5)) {
 //            telemetry.addData("Path", "Move LiftMotor up: %2.5f S Elapsed", runtime.seconds());
@@ -101,7 +99,7 @@ public class MecanumAutoBlue extends LinearOpMode {
 //            telemetry.update();
 //        }
 
-        robot.liftMotor.setPower(0.0);
+        robot.tiltMotor.setPower(0.0);
         robot.LFMotor.setPower(0.3);
         robot.LRMotor.setPower(-0.3);
         robot.RFMotor.setPower(-0.3);

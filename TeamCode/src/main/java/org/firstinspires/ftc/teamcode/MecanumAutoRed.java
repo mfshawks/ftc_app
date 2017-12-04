@@ -67,7 +67,7 @@ public class MecanumAutoRed extends LinearOpMode {
 
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
-        robot.liftMotor.setPower(0.0);
+        robot.tiltMotor.setPower(0.0);
         robot.LFMotor.setPower(0.3);
         robot.LRMotor.setPower(-0.3);
         robot.RFMotor.setPower(-0.3);

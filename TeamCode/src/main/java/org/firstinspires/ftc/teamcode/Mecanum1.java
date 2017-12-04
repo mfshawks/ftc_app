@@ -30,9 +30,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -63,8 +63,8 @@ public class Mecanum1
     public DcMotor RFMotor = null;
     public DcMotor LRMotor  = null;
     public DcMotor RRMotor = null;
-    public DcMotor liftMotor   = null;
     public DcMotor tiltMotor = null;
+    public DcMotor liftMotor = null;
     public Servo arm         = null;
     public Servo Lclaw        = null;
     public Servo Rclaw        = null;
@@ -107,8 +107,9 @@ public class Mecanum1
         LRMotor = hwMap.get(DcMotor.class, "LRMotor");
         RRMotor = hwMap.get(DcMotor.class, "RRMotor");
         LRMotor.setDirection(DcMotor.Direction.REVERSE);
-        liftMotor = hwMap.get(DcMotor.class, "LiftMotor");
-        tiltMotor = hwMap.get(DcMotor.class, "tiltMotor");
+        tiltMotor = hwMap.get(DcMotor.class, "LiftMotor");
+        liftMotor = hwMap.get(DcMotor.class, "liftMotor");
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //  liftM  = hwMap.get(DcMotor.class, "liftM");
         // Set all motors to zero power
@@ -116,8 +117,8 @@ public class Mecanum1
         RFMotor.setPower(0);
         LRMotor.setPower(0);
         RRMotor.setPower(0);
-        tiltMotor.setPower(0);
         liftMotor.setPower(0);
+        tiltMotor.setPower(0);
 
 
         // Set all motors to run without encoders.

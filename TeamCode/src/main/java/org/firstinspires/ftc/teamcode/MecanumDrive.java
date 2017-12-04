@@ -2,22 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
-import java.util.Locale;
 
 /**
  * This is a class for robot Mecanum-1 that uses across different autonomous modes.
@@ -154,17 +147,17 @@ public class MecanumDrive {
 
         // Ensure that the opmode is still active
         if (opMode.opModeIsActive()) {
-            newLiftTarget = robot.tiltMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
+            newLiftTarget = robot.liftMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
             // Determine new target position, and pass to motor controller
 
-            robot.tiltMotor.setTargetPosition(newLiftTarget);
+            robot.liftMotor.setTargetPosition(newLiftTarget);
 
             // Turn On RUN_TO_POSITION
-            robot.tiltMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.tiltMotor.setPower(Math.abs(speed));
+            robot.liftMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -174,20 +167,20 @@ public class MecanumDrive {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    robot.tiltMotor.isBusy()) {
+                    robot.liftMotor.isBusy()) {
 
                 // Display it for the driver.
                 opMode.telemetry.addData("Path1",  "Lift mptor running to %7d", newLiftTarget);
                 opMode.telemetry.addData("Path2",  "Running at %7d",
-                        robot.tiltMotor.getCurrentPosition());
+                        robot.liftMotor.getCurrentPosition());
                 opMode.telemetry.update();
             }
 
             // Stop all motion;
-            robot.tiltMotor.setPower(0);
+            robot.liftMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
-            robot.tiltMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //  sleep(250);   // optional pause after each move
         }
