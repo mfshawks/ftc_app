@@ -135,6 +135,9 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.LHand.setPosition(0.8);
         robot.Lclaw.setPosition(0.0); //arm up
         robot.Rclaw.setPosition(0.0);
+
+        mecanumDrive.gyroInit();
+
         waitForStart();
 //>>>>>>>>>>>>>>>>>>>>>>>>>>START>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -229,6 +232,16 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         }
 
         mecanumDrive.encoderDriveMove(0.5, direction.RIGHT, distanceToTheRight, 5);
+
+        mecanumDrive.gyroTurn(0.8, 180);
+
+        robot.RHand.setPosition(0.8); //arm \ /
+        robot.LHand.setPosition(0.8);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+            telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
+            telemetry.update();
+        }
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

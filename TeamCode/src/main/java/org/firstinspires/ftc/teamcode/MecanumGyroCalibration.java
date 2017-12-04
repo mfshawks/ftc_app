@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.adafruit.AdafruitBNO055IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -47,7 +47,7 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * {@link SensorBNO055IMUCalibration} calibrates the IMU accelerometer per
+ * {@link MecanumGyroCalibration} calibrates the IMU accelerometer per
  * "Section 3.11 Calibration" of the BNO055 specification.
  *
  * <p>Manual calibration of the IMU is definitely NOT necessary: except for the magnetometer
@@ -100,8 +100,10 @@ import java.util.Locale;
  */
 @TeleOp(name = "Sensor: BNO055 IMU Calibration", group = "Sensor")
 @Disabled                            // Uncomment this to add to the opmode list
-public class SensorBNO055IMUCalibration extends LinearOpMode
+public class MecanumGyroCalibration extends LinearOpMode
     {
+
+        Mecanum1   robot           = new Mecanum1();
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
@@ -117,6 +119,7 @@ public class SensorBNO055IMUCalibration extends LinearOpMode
     //----------------------------------------------------------------------------------------------
 
     @Override public void runOpMode() {
+        robot.init(hardwareMap);
 
         telemetry.log().setCapacity(12);
         telemetry.log().add("");
@@ -133,8 +136,7 @@ public class SensorBNO055IMUCalibration extends LinearOpMode
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.loggingEnabled = true;
         parameters.loggingTag     = "IMU";
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        robot.gyro.initialize(parameters);
 
         composeTelemetry();
         telemetry.log().add("Waiting for start...");
