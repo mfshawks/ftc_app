@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -70,6 +71,7 @@ public class Mecanum1
     public Servo RHand        = null;
     public ColorSensor armColorSensor = null;
     public DistanceSensor armDistanceSensor = null;
+    public ModernRoboticsI2cGyro gyro = null;
 
 
     public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
@@ -134,6 +136,8 @@ public class Mecanum1
         LHand = hwMap.get(Servo.class, "LHand");
         RHand = hwMap.get(Servo.class, "RHand");
 
+//        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+
         armColorSensor = hwMap.get(ColorSensor.class, "acs");
         armDistanceSensor = hwMap.get(DistanceSensor.class, "acs");
 
@@ -145,3 +149,4 @@ public class Mecanum1
         Rclaw.setPosition(CLAW_HOME);
     }
 }
+

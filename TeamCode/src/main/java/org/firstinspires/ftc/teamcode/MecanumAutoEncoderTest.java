@@ -66,6 +66,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+        MecanumDrive mecanumDrive = new MecanumDrive(robot, this);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
@@ -86,102 +87,6 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
 
 
         // Step through each leg of the path
-        encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 20, 20);
-    }
-
-    public enum direction {
-        FORWARD, BACKWARD, LEFT, RIGHT
-    }
-
-    public void encoderDriveMove(double speed,
-                             direction direction,
-                             double distanceInInch,
-                             double timeoutS) {
-        int newLeftRearTarget = 0;
-        int newRightRearTarget = 0;
-        int newLeftFrontTarget = 0;
-        int newRightFrontTarget = 0;
-
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-            switch (direction) {
-                case LEFT:
-                    newLeftRearTarget = robot.LRMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightRearTarget = robot.RRMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newLeftFrontTarget = robot.LFMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightFrontTarget = robot.LFMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    break;
-                case RIGHT:
-                    newLeftRearTarget = robot.LRMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightRearTarget = robot.RRMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newLeftFrontTarget = robot.LFMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightFrontTarget = robot.LFMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    break;
-                case BACKWARD:
-                    newLeftRearTarget = robot.LRMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightRearTarget = robot.RRMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newLeftFrontTarget = robot.LFMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightFrontTarget = robot.LFMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
-                    break;
-                case FORWARD:
-                    newLeftRearTarget = robot.LRMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightRearTarget = robot.RRMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newLeftFrontTarget = robot.LFMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    newRightFrontTarget = robot.LFMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
-                    break;
-            }
-            // Determine new target position, and pass to motor controller
-
-            robot.LRMotor.setTargetPosition(newLeftRearTarget);
-            robot.RRMotor.setTargetPosition(newRightRearTarget);
-            robot.LFMotor.setTargetPosition(newLeftFrontTarget);
-            robot.RFMotor.setTargetPosition(newRightFrontTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.LRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.LFMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.RRMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.RFMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.LRMotor.setPower(Math.abs(speed));
-            robot.LFMotor.setPower(Math.abs(speed));
-        robot.RRMotor.setPower(Math.abs(speed));
-            robot.RFMotor.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   robot.LRMotor.isBusy() && robot.LFMotor.isBusy() && robot.RFMotor.isBusy() && robot.RRMotor.isBusy()) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newRightFrontTarget,  newLeftFrontTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.RFMotor.getCurrentPosition(),
-                                            robot.LFMotor.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.LFMotor.setPower(0);
-            robot.LRMotor.setPower(0);
-            robot.RFMotor.setPower(0);
-            robot.RRMotor.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
+        mecanumDrive.encoderDriveMove(DRIVE_SPEED, direction.FORWARD, 20, 20);
     }
 }
