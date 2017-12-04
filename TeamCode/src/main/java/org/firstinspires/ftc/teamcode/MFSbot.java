@@ -105,8 +105,8 @@ public class MFSbot
 
         // Define and initialize ALL installed servos.
         arm  = hwMap.get(Servo.class, "arm");
-        Lclaw = hwMap.get(Servo.class, "Lclaw");
-        Rclaw = hwMap.get(Servo.class, "Rclaw");
+        Lclaw = hwMap.get(Servo.class, "LClaw");
+        Rclaw = hwMap.get(Servo.class, "RClaw");
         arm.setPosition(ARM_HOME);
         Lclaw.setDirection(Servo.Direction.REVERSE);
         Lclaw.setPosition(CLAW_HOME);

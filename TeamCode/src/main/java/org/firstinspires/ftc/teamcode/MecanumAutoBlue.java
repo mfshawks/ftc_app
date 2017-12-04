@@ -68,8 +68,8 @@ public class MecanumAutoBlue extends LinearOpMode {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
 
-//        robot.Lclaw.setPosition(0.5);
-//        robot.Rclaw.setPosition(0.5);
+//        robot.LClaw.setPosition(0.5);
+//        robot.RClaw.setPosition(0.5);
 //        robot.LHand.setPosition(0.9);
 //        robot.RHand.setPosition(0.9);
 //        runtime.reset();

@@ -60,8 +60,8 @@ public class Bigwheels {
     public DcMotor rightM  = null;
    // public DcMotor  liftM   = null;
     public Servo arm         = null;
-    //public Servo    Lclaw        = null;
-    //public Servo    Rclaw        = null;
+    //public Servo    LClaw        = null;
+    //public Servo    RClaw        = null;
 
     //public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
     //public final static double CLAW_HOME = 0.3;
@@ -104,11 +104,11 @@ public class Bigwheels {
 
         // Define and initialize ALL installed servos.
         //arm  = hwMap.get(Servo.class, "arm");
-        //Lclaw = hwMap.get(Servo.class, "Lclaw");
-        //Rclaw = hwMap.get(Servo.class, "Rclaw");
+        //LClaw = hwMap.get(Servo.class, "LClaw");
+        //RClaw = hwMap.get(Servo.class, "RClaw");
         //arm.setPosition(ARM_HOME);
-        //Lclaw.setDirection(Servo.Direction.REVERSE);
-        //Lclaw.setPosition(CLAW_HOME);
-        //Rclaw.setPosition(CLAW_HOME);
+        //LClaw.setDirection(Servo.Direction.REVERSE);
+        //LClaw.setPosition(CLAW_HOME);
+        //RClaw.setPosition(CLAW_HOME);
     }
 }

@@ -140,8 +140,8 @@ public class MFSbotTeleop extends LinearOpMode {
 */
             // Send telemetry message to signify robot running;
             telemetry.addData("arm",   "%.2f", armPosition);
-            telemetry.addData("Rclaw",  "%.2f", clawPosition);
-            telemetry.addData("Lclaw",  "%.2f", clawPosition);
+            telemetry.addData("RClaw",  "%.2f", clawPosition);
+            telemetry.addData("LClaw",  "%.2f", clawPosition);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));

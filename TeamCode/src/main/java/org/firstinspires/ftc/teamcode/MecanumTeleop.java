@@ -142,8 +142,8 @@ public class MecanumTeleop extends LinearOpMode {
                 clawPosition -= CLAW_SPEED;
 
             clawPosition = Range.clip(clawPosition, Mecanum1.CLAW_MIN_RANGE, Mecanum1.CLAW_MAX_RANGE);
-            robot.Rclaw.setPosition(clawPosition);
-            robot.Lclaw.setPosition(clawPosition);
+            robot.RClaw.setPosition(clawPosition);
+            robot.LClaw.setPosition(clawPosition);
 
 
             if (gamepad1.dpad_down)
@@ -160,8 +160,8 @@ public class MecanumTeleop extends LinearOpMode {
 
             // Send telemetry message to signify robot running;
             telemetry.addData("arm",   "%.2f", armPosition);
-            telemetry.addData("Rclaw",  "%.2f", clawPosition);
-            telemetry.addData("Lclaw",  "%.2f", clawPosition);
+            telemetry.addData("RClaw",  "%.2f", clawPosition);
+            telemetry.addData("LClaw",  "%.2f", clawPosition);
             telemetry.addData("Rhand",  "%.2f", handPosition);
             telemetry.addData("Lhand",  "%.2f", handPosition);
 

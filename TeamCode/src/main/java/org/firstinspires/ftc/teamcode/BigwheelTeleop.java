@@ -113,8 +113,8 @@ public class BigwheelTeleop extends LinearOpMode {
             armPosition  = Range.clip(armPosition, robot.ARM_MIN_RANGE, robot.ARM_MAX_RANGE);
             robot.arm.setPosition(armPosition);
             clawPosition = Range.clip(clawPosition, robot.CLAW_MIN_RANGE, robot.CLAW_MAX_RANGE);
-            robot.Rclaw.setPosition(clawPosition);
-            robot.Lclaw.setPosition(clawPosition);
+            robot.RClaw.setPosition(clawPosition);
+            robot.LClaw.setPosition(clawPosition);
 
             if (gamepad1.left_bumper){
                 robot.liftM.setPower(lift);
@@ -139,8 +139,8 @@ public class BigwheelTeleop extends LinearOpMode {
 
             // Send telemetry message to signify robot running;
             telemetry.addData("arm",   "%.2f", armPosition);
-            telemetry.addData("Rclaw",  "%.2f", clawPosition);
-            telemetry.addData("Lclaw",  "%.2f", clawPosition);
+            telemetry.addData("RClaw",  "%.2f", clawPosition);
+            telemetry.addData("LClaw",  "%.2f", clawPosition);
             telemetry.addData("left",  "%.2f", left);
             telemetry.addData("right", "%.2f", right);
             telemetry.update();

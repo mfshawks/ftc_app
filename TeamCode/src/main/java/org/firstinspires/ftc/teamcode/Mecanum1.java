@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -56,18 +55,17 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *   As the arm servo approaches 0, the arm position moves up (away from the floor).
  *   As the claw servo approaches 0, the claw opens up (drops the game element).
  */
-public class Mecanum1
-{
+public class Mecanum1 {
     /* Public OpMode members. */
-    public DcMotor LFMotor = null;
-    public DcMotor RFMotor = null;
-    public DcMotor LRMotor  = null;
-    public DcMotor RRMotor = null;
-    public DcMotor tiltMotor = null;
-    public DcMotor liftMotor = null;
-    public Servo arm         = null;
-    public Servo Lclaw        = null;
-    public Servo Rclaw        = null;
+    public DcMotor LFMotor    = null;
+    public DcMotor RFMotor    = null;
+    public DcMotor LRMotor    = null;
+    public DcMotor RRMotor    = null;
+    public DcMotor tiltMotor  = null;
+    public DcMotor liftMotor  = null;
+    public Servo arm          = null;
+    public Servo LClaw        = null;
+    public Servo RClaw        = null;
     public Servo LHand        = null;
     public Servo RHand        = null;
     public ColorSensor armColorSensor = null;
@@ -133,8 +131,8 @@ public class Mecanum1
         // Define and initialize ALL installed servos.
         arm  = hwMap.get(Servo.class, "arm");
         arm.setDirection(Servo.Direction.REVERSE);
-        Lclaw = hwMap.get(Servo.class, "LClaw");
-        Rclaw = hwMap.get(Servo.class, "RClaw");
+        LClaw = hwMap.get(Servo.class, "LClaw");
+        RClaw = hwMap.get(Servo.class, "RClaw");
         LHand = hwMap.get(Servo.class, "LHand");
         RHand = hwMap.get(Servo.class, "RHand");
 
@@ -144,11 +142,11 @@ public class Mecanum1
         armDistanceSensor = hwMap.get(DistanceSensor.class, "acs");
 
         LHand.setDirection(Servo.Direction.REVERSE);
-        Lclaw.setDirection(Servo.Direction.REVERSE);
+        LClaw.setDirection(Servo.Direction.REVERSE);
         LHand.setPosition(HAND_HOME);
         RHand.setPosition(HAND_HOME);
-        Lclaw.setPosition(CLAW_HOME);
-        Rclaw.setPosition(CLAW_HOME);
+        LClaw.setPosition(CLAW_HOME);
+        RClaw.setPosition(CLAW_HOME);
     }
 }
 

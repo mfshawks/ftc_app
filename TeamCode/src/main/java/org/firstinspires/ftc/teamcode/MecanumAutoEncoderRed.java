@@ -132,8 +132,8 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
-        robot.Lclaw.setPosition(0.0); //arm up
-        robot.Rclaw.setPosition(0.0);
+        robot.LClaw.setPosition(0.0); //arm up
+        robot.RClaw.setPosition(0.0);
 
         mecanumDrive.gyroInit();
 
@@ -145,8 +145,8 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
 
         runtime.reset();
-        robot.Lclaw.setPosition(0.5);
-        robot.Rclaw.setPosition(0.5);
+        robot.LClaw.setPosition(0.5);
+        robot.RClaw.setPosition(0.5);
         while (opModeIsActive() && runtime.seconds() < 3.0) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
