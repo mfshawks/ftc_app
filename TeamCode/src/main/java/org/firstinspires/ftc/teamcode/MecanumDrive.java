@@ -1,10 +1,23 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+
+import java.io.File;
+import java.util.Locale;
 
 /**
  * This is a class for robot Mecanum-1 that uses across different autonomous modes.
@@ -26,6 +39,8 @@ public class MecanumDrive {
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
+
+    private Orientation angles;
 
     /** Constructor
      * @param robotInstance The robot instance initialized using method robot.init(hardwareMap)
@@ -178,90 +193,102 @@ public class MecanumDrive {
         }
     }
 
-//    public void gyroInit() {
-//
-//    }
-//
-//    /**
-//     *  Method to spin on central axis to point in a new direction.
-//     *  Move will stop if either of these conditions occur:
-//     *  1) Move gets to the heading (angle)
-//     *  2) Driver stops the opmode running.
-//     *
-//     * @param speed Desired speed of turn.
-//     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-//     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-//     *                   If a relative angle is required, add/subtract from current heading.
-//     */
-//    public void gyroTurn (double speed, double angle) {
-//
-//        // keep looping while we are still active, and not on heading.
-//        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-//            // Update telemetry & Allow time for other processes to run.
-//            opMode.telemetry.update();
-//        }
-//    }
-//
-//    private boolean onHeading(double speed, double angle, double PCoeff) {
-//        double   error ;
-//        double   steer ;
-//        boolean  onTarget = false ;
-//        double leftSpeed;
-//        double rightSpeed;
-//
-//        // determine turn power based on +/- error
-//        error = getError(angle);
-//
-//        if (Math.abs(error) <= HEADING_THRESHOLD) {
-//            steer = 0.0;
-//            leftSpeed  = 0.0;
-//            rightSpeed = 0.0;
-//            onTarget = true;
-//        }
-//        else {
-//            steer = getSteer(error, PCoeff);
-//            rightSpeed  = speed * steer;
-//            leftSpeed   = -rightSpeed;
-//        }
-//
-//        // Send desired speeds to motors.
-//        robot.LRMotor.setPower(leftSpeed);
-//        robot.LRMotor.setPower(leftSpeed);
-//        robot.RRMotor.setPower(rightSpeed);
-//        robot.RFMotor.setPower(rightSpeed);
-//
-//        // Display it for the driver.
-//        opMode.telemetry.addData("Target", "%5.2f", angle);
-//        opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-//        opMode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-//
-//        return onTarget;
-//    }
-//
-//    /**
-//     * getError determines the error between the target angle and the robot's current heading
-//     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-//     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-//     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
-//     */
-//    private double getError(double targetAngle) {
-//
-//        double robotError;
-//
-//        // calculate error in -179 to +180 range  (
-//        robotError = targetAngle - robot.gyro.getIntegratedZValue();
-//        while (robotError > 180)  robotError -= 360;
-//        while (robotError <= -180) robotError += 360;
-//        return robotError;
-//    }
-//
-//    /**
-//     * returns desired steering force.  +/- 1 range.  +ve = steer left
-//     * @param error   Error angle in robot relative degrees
-//     * @param PCoeff  Proportional Gain Coefficient
-//     * @return
-//     */
-//    private double getSteer(double error, double PCoeff) {
-//        return Range.clip(error * PCoeff, -1, 1);
-//    }
+    public void gyroInit() {
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        robot.gyro.initialize(parameters);
+    }
+
+    /**
+     *  Method to spin on central axis to point in a new direction.
+     *  Move will stop if either of these conditions occur:
+     *  1) Move gets to the heading (angle)
+     *  2) Driver stops the opmode running.
+     *
+     * @param speed Desired speed of turn.
+     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
+     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                   If a relative angle is required, add/subtract from current heading.
+     */
+    public void gyroTurn (double speed, double angle) {
+
+        // keep looping while we are still active, and not on heading.
+        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+            // Update telemetry & Allow time for other processes to run.
+            opMode.telemetry.update();
+        }
+    }
+
+    private boolean onHeading(double speed, double angle, double PCoeff) {
+        double   error ;
+        double   steer ;
+        boolean  onTarget = false ;
+        double leftSpeed;
+        double rightSpeed;
+
+        // determine turn power based on +/- error
+        error = getError(angle);
+
+        if (Math.abs(error) <= HEADING_THRESHOLD) {
+            steer = 0.0;
+            leftSpeed  = 0.0;
+            rightSpeed = 0.0;
+            onTarget = true;
+        }
+        else {
+            steer = getSteer(error, PCoeff);
+            rightSpeed  = speed * steer;
+            leftSpeed   = -rightSpeed;
+        }
+
+        // Send desired speeds to motors.
+        robot.LRMotor.setPower(leftSpeed);
+        robot.LRMotor.setPower(leftSpeed);
+        robot.RRMotor.setPower(rightSpeed);
+        robot.RFMotor.setPower(rightSpeed);
+
+        // Display it for the driver.
+        opMode.telemetry.addData("Target", "%5.2f", angle);
+        opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        opMode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+
+        return onTarget;
+    }
+
+    private double getError(double targetAngle) {
+
+        double robotError;
+
+        // calculate error in -179 to +180 range  (
+        /*
+      getError determines the error between the target angle and the robot's current heading
+      */
+        angles = robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        robotError = targetAngle - angles.firstAngle;
+        while (robotError > 180)  robotError -= 360;
+        while (robotError <= -180) robotError += 360;
+        return robotError;
+    }
+
+    /**
+     * returns desired steering force.  +/- 1 range.  +ve = steer left
+     * @param error   Error angle in robot relative degrees
+     * @param PCoeff  Proportional Gain Coefficient
+     * @return
+     */
+    private double getSteer(double error, double PCoeff) {
+        return Range.clip(error * PCoeff, -1, 1);
+    }
 }

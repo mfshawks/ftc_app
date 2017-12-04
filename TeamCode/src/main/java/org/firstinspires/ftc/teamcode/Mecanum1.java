@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -71,7 +72,7 @@ public class Mecanum1
     public Servo RHand        = null;
     public ColorSensor armColorSensor = null;
     public DistanceSensor armDistanceSensor = null;
-    public ModernRoboticsI2cGyro gyro = null;
+    public BNO055IMU gyro = null;
 
 
     public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
@@ -81,7 +82,7 @@ public class Mecanum1
     public final static double ARM_MAX_RANGE  = 1.0;
     public final static double CLAW_MIN_RANGE  = 0.0; // 0-> I; 0.5-> ---
     public final static double CLAW_MAX_RANGE  = 0.5;
-    public final static double HAND_MIN_RANGE  = 0.8; // 0.8->/\; 0.9-> \/;
+    public final static double HAND_MIN_RANGE  = 0.8; // 0.8->\/; 0.9-> /\;
     public final static double HAND_MAX_RANGE  = 1.0;
 
     /* Local OpMode members. */
@@ -136,7 +137,7 @@ public class Mecanum1
         LHand = hwMap.get(Servo.class, "LHand");
         RHand = hwMap.get(Servo.class, "RHand");
 
-//        gyro = (ModernRoboticsI2cGyro)hwMap.gyroSensor.get("gyro");
+        gyro = hwMap.get(BNO055IMU.class, "imu");
 
         armColorSensor = hwMap.get(ColorSensor.class, "acs");
         armDistanceSensor = hwMap.get(DistanceSensor.class, "acs");
