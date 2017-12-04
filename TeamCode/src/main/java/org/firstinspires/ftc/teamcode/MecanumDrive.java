@@ -29,11 +29,8 @@ public class MecanumDrive {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
-    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
-
-    private Orientation angles;
+    private static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
+    private static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
 
     /** Constructor
      * @param robotInstance The robot instance initialized using method robot.init(hardwareMap)
@@ -260,15 +257,15 @@ public class MecanumDrive {
         return onTarget;
     }
 
+    /**
+     * getError determines the error between the target angle and the robot's current heading
+     */
     private double getError(double targetAngle) {
 
         double robotError;
 
         // calculate error in -179 to +180 range  (
-        /*
-      getError determines the error between the target angle and the robot's current heading
-      */
-        angles = robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = robot.gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         robotError = targetAngle - angles.firstAngle;
         while (robotError > 180)  robotError -= 360;
         while (robotError <= -180) robotError += 360;

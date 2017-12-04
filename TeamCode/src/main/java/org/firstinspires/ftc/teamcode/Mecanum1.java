@@ -73,15 +73,15 @@ public class Mecanum1 {
     public BNO055IMU gyro = null;
 
 
-    public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
-    public final static double CLAW_HOME = 0.1;
-    public final static double HAND_HOME = 0.8;
-    public final static double ARM_MIN_RANGE  = 0.00;
-    public final static double ARM_MAX_RANGE  = 1.0;
-    public final static double CLAW_MIN_RANGE  = 0.0; // 0-> I; 0.5-> ---
-    public final static double CLAW_MAX_RANGE  = 0.5;
-    public final static double HAND_MIN_RANGE  = 0.8; // 0.8->\/; 0.9-> /\;
-    public final static double HAND_MAX_RANGE  = 1.0;
+    final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
+    final static double CLAW_HOME = 0.1;
+    final static double HAND_HOME = 0.8;
+    final static double ARM_MIN_RANGE  = 0.00;
+    final static double ARM_MAX_RANGE  = 1.0;
+    final static double CLAW_MIN_RANGE  = 0.0; // 0-> I; 0.5-> ---
+    final static double CLAW_MAX_RANGE  = 0.5;
+    final static double HAND_MIN_RANGE  = 0.8; // 0.8->\/; 0.9-> /\;
+    final static double HAND_MAX_RANGE  = 1.0;
 
     /* Local OpMode members. */
     HardwareMap hwMap  = null;
