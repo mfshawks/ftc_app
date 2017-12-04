@@ -219,13 +219,13 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         double distanceToTheRight = 15.5;
         switch (column) {
             case RIGHT:
-                distanceToTheRight = 7.5;
+                distanceToTheRight = 8.0;
                 break;
             case LEFT:
-                distanceToTheRight = 23.5;
+                distanceToTheRight = 24.0;
                 break;
             case CENTER:
-                distanceToTheRight = 15.5;
+                distanceToTheRight = 16.0;
                 break;
             case UNKNOWN:
                 break;
