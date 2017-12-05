@@ -17,9 +17,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  * Before you use these functions, you must initialize this class using the constructor {@link #MecanumDrive(Mecanum1, LinearOpMode) constructor} below.
  */
 
-public class MecanumDrive {
+class MecanumDrive {
     Mecanum1 robot = null;
-    LinearOpMode opMode = null;
+    private LinearOpMode opMode = null;
 
     private static final double     COUNTS_PER_MOTOR_REV    = 1718 ;    // eg: TETRIX Motor Encoder
     private static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
@@ -40,6 +40,25 @@ public class MecanumDrive {
     MecanumDrive(Mecanum1 robotInstance, LinearOpMode opModeInstance) {
         robot = robotInstance;
         opMode = opModeInstance;
+    }
+
+    void resetEncoders() {
+        // Send telemetry message to signify robot waiting
+        opMode.telemetry.addData("Status", "Resetting Encoders");    //
+        opMode.telemetry.update();
+
+        robot.LFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.LRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.RRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+
+        robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     void encoderDriveMove(double speed,
@@ -139,7 +158,7 @@ public class MecanumDrive {
     void liftMotorDrive(double speed,
                         double distanceInInch,
                         double timeoutS) {
-        int newLiftTarget = 0;
+        int newLiftTarget;
 
 
         // Ensure that the opmode is still active
@@ -183,7 +202,7 @@ public class MecanumDrive {
         }
     }
 
-    public void gyroInit() {
+    void gyroInit() {
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -212,7 +231,7 @@ public class MecanumDrive {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from current heading.
      */
-    public void gyroTurn (double speed, double angle) {
+    void gyroTurn(double speed, double angle) {
 
         // keep looping while we are still active, and not on heading.
         while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
@@ -276,7 +295,7 @@ public class MecanumDrive {
      * returns desired steering force.  +/- 1 range.  +ve = steer left
      * @param error   Error angle in robot relative degrees
      * @param PCoeff  Proportional Gain Coefficient
-     * @return
+     * @return desired steering force
      */
     private double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1, 1);
