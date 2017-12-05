@@ -105,8 +105,8 @@ public class Mecanum1 {
         LRMotor = hwMap.get(DcMotor.class, "LRMotor");
         RRMotor = hwMap.get(DcMotor.class, "RRMotor");
         LRMotor.setDirection(DcMotor.Direction.REVERSE);
-        tiltMotor = hwMap.get(DcMotor.class, "LiftMotor");
-        liftMotor = hwMap.get(DcMotor.class, "liftMotor");
+        tiltMotor = hwMap.get(DcMotor.class, "liftMotor");
+        liftMotor = hwMap.get(DcMotor.class, "tiltMotor");
         liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //  liftM  = hwMap.get(DcMotor.class, "liftM");

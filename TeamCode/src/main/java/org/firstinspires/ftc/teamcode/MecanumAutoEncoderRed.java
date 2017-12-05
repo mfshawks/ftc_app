@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -147,7 +148,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         runtime.reset();
         robot.LClaw.setPosition(0.5);
         robot.RClaw.setPosition(0.5);
-        while (opModeIsActive() && runtime.seconds() < 3.0) {
+        while (opModeIsActive() && runtime.seconds() < 1.5) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
@@ -191,17 +192,47 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         //encoderDriveMove(0.3, direction.RIGHT, 3, 3);
 
         robot.arm.setPosition(0.7);
-        mecanumDrive.liftMotorDrive(1.0, 20, 5);
+        mecanumDrive.liftMotorDrive(1.0, 13, 5);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
             telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
             telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            switch (column) {
+                case RIGHT:
+                    telemetry.addData("Position",new Func<String>() {
+                        @Override public String value() {
+                            return "Right";
+                        }
+                    });
+                    break;
+                case LEFT:
+                    telemetry.addData("Position",new Func<String>() {
+                        @Override public String value() {
+                            return "Left";
+                        }
+                    });
+                    break;
+                case CENTER:
+                    telemetry.addData("Position",new Func<String>() {
+                        @Override public String value() {
+                            return "Center";
+                        }
+                    });
+                    break;
+                case UNKNOWN:
+                    telemetry.addData("Position",new Func<String>() {
+                        @Override public String value() {
+                            return "Unknown";
+                        }
+                    });
+                    break;
+            }
             telemetry.update();
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 24; // The distance to move forward afterward
+        double backwardInch = 26; // The distance to move forward afterward
         if (isRed) {
             // Move back
             mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
@@ -233,6 +264,8 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         mecanumDrive.encoderDriveMove(0.5, direction.RIGHT, distanceToTheRight, 5);
 
         mecanumDrive.gyroTurn(0.8, 180);
+
+        mecanumDrive.encoderDriveMove(0.5, direction.FORWARD, 13, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
