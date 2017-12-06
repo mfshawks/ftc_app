@@ -141,7 +141,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.LHand.setPosition(1.0);
 
         robot.arm.setPosition(0.7);
-        mecanumDrive.liftMotorDrive(1.0, 9, 5); // Lift the block up 9 inches
+        mecanumDrive.liftMotorDrive(1.0, 4, 5); // Lift the block up 4 inches
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
@@ -181,7 +181,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 27; // The distance to move forward afterward
+        double backwardInch = 34; // The distance to move forward afterward
         if (isRed) {
             // Move back
             mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
@@ -195,7 +195,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.arm.setPosition(0.0);
         mecanumDrive.encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
 
-        double distanceToTheRight = 15.5;
+        double distanceToTheRight = 16.0;
         switch (column) {
             case RIGHT:
                 distanceToTheRight = 8.0;
@@ -214,23 +214,21 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
 
         mecanumDrive.gyroTurn(0.8, 180);
 
-        mecanumDrive.encoderDriveMove(0.7, direction.FORWARD, 12, 3);
+        mecanumDrive.encoderDriveMove(0.7, direction.FORWARD, 6, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 0.3)) {
             telemetry.addData("Path", "Move arm apart: %2.5f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
 
-        sleep(1000);
-
         mecanumDrive.encoderDriveMove(0.3, direction.FORWARD, 2, 1);
 
-        mecanumDrive.liftMotorDrive(0.8, -5, 1);
+        mecanumDrive.liftMotorDrive(0.8, -3, 4);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
