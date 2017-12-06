@@ -42,8 +42,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 
 
-@Autonomous(name="M Encoder Red")
-public class MecanumAutoEncoderRed extends LinearOpMode {
+@Autonomous(name="M Encoder Red Right")
+public class MecanumAutoEncoderRedRight extends LinearOpMode {
 
     /* Declare OpMode members. */
     Mecanum1 robot   = new Mecanum1();   // Use Mecanum 1 robot
@@ -181,7 +181,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 34; // The distance to move forward afterward
+        double backwardInch = 28; // The distance to move forward afterward
         if (isRed) {
             // Move back
             mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
@@ -195,16 +195,16 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
         robot.arm.setPosition(0.0);
         mecanumDrive.encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
 
-        double distanceToTheRight = 16.0;
+        double distanceToTheRight = 9.5;
         switch (column) {
             case RIGHT:
-                distanceToTheRight = 8.0;
+                distanceToTheRight = 1.5;
                 break;
             case LEFT:
-                distanceToTheRight = 24.0;
+                distanceToTheRight = 18.5;
                 break;
             case CENTER:
-                distanceToTheRight = 16.0;
+                distanceToTheRight = 9.5;
                 break;
             case UNKNOWN:
                 break;
@@ -214,7 +214,7 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
 
         mecanumDrive.gyroTurn(0.8, 180);
 
-        mecanumDrive.encoderDriveMove(0.7, direction.FORWARD, 6, 3);
+        mecanumDrive.encoderDriveMove(0.7, direction.FORWARD, 9.5, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
@@ -224,11 +224,9 @@ public class MecanumAutoEncoderRed extends LinearOpMode {
             telemetry.update();
         }
 
-        mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
+        mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 4, 1);
 
         mecanumDrive.encoderDriveMove(0.3, direction.FORWARD, 2, 1);
-
-        mecanumDrive.liftMotorDrive(0.8, -3, 4);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
