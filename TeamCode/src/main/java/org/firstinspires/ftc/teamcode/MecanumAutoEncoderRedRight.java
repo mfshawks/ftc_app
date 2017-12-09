@@ -31,14 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 
@@ -47,7 +40,7 @@ public class MecanumAutoEncoderRedRight extends LinearOpMode {
 
     /* Declare OpMode members. */
     Mecanum1 robot   = new Mecanum1();   // Use Mecanum 1 robot
-    private ElapsedTime runtime = new ElapsedTime();
+    //private ElapsedTime runtime = new ElapsedTime();
 
     // OpenGLMatrix lastLocation = null;
     // int a;
@@ -62,174 +55,7 @@ public class MecanumAutoEncoderRedRight extends LinearOpMode {
         robot.init(hardwareMap);
         MecanumDrive mecanumDrive = new MecanumDrive(robot, this);
 
-        mecanumDrive.resetEncoders();
-        mecanumDrive.gyroInit();
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robot.LRMotor.getCurrentPosition(),
-                          robot.RRMotor.getCurrentPosition());
-        telemetry.update();
-
-        robot.LFMotor.setPower(0);
-        robot.RFMotor.setPower(0);
-        robot.LRMotor.setPower(0);
-        robot.RRMotor.setPower(0);
-        robot.arm.setPosition(0.0);
-        robot.RHand.setPosition(0.8); //arm \ /
-        robot.LHand.setPosition(0.8);
-        robot.LClaw.setPosition(0.0); //arm up
-        robot.RClaw.setPosition(0.0);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Ready to run");
-        telemetry.update();
-
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources()
-                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-
-        parameters.vuforiaLicenseKey = "AQRju9v/////AAAAGYVVWUuAKEAPph69Ouwpq+8CMlbZi/zomEEP" +
-                "MAzyzRvCU9xj4/W+fiPSxFB1xv8BdlL55c6vD9wbMdHCPpMKKIqrNIJpXw06LgCF8xDeBXJEOEo" +
-                "oeyamPY8gLwHvkHDA0EEP52F+b7J1IDRbmJedlK6GdOIYFLiSBVISCf0+vdiWJvJiWiPTgggSiC" +
-                "RsV8IsK/OYwOqv5VoPv/m7no+VACFqPTcsKaAv5F49zqYXIncFbNKv9onHg5CEkZ4aMf7D/zcAp" +
-                "hCO5Gb3BN+DtyUmrHM4oALhoMFgqRw59plwzxfD45Uzfyu6Jn2k7LPTCqs94SpprMfOqOotLtBHx" +
-                "T19Rkl5toHI5buxqLlQDOX8y/jQ";
-
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; // Use back camera
-        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(parameters);
-
-        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate");
-
-        telemetry.addData(">", "Press Play to start");
-        telemetry.update();
-
-        waitForStart();
-//>>>>>>>>>>>>>>>>>>>>>>>>>>START>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-        relicTrackables.activate();
-
-        RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
-
-        runtime.reset();
-        robot.LClaw.setPosition(0.5);
-        robot.RClaw.setPosition(0.5);
-        while (opModeIsActive() && runtime.seconds() < 1.5) {
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-                /* Found an instance of the template. In the actual game, you will probably
-                 * loop until this condition occurs, then move on to act accordingly depending
-                 * on which VuMark was visible. */
-                telemetry.addData("VuMark", "%s visible", vuMark);
-                column = vuMark;
-
-                break; // Break the while loop after the vuMark is found
-            } else {
-                telemetry.addData("VuMark", "not visible");
-            }
-
-            telemetry.update();
-        }
-
-        robot.RHand.setPosition(1.0);
-        robot.LHand.setPosition(1.0);
-
-        robot.arm.setPosition(0.7);
-        mecanumDrive.liftMotorDrive(1.0, 4, 5); // Lift the block up 4 inches
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
-            telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
-            telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
-            switch (column) {
-                case RIGHT:
-                    telemetry.addData("Position",new Func<String>() {
-                        @Override public String value() {
-                            return "Right";
-                        }
-                    });
-                    break;
-                case LEFT:
-                    telemetry.addData("Position",new Func<String>() {
-                        @Override public String value() {
-                            return "Left";
-                        }
-                    });
-                    break;
-                case CENTER:
-                    telemetry.addData("Position",new Func<String>() {
-                        @Override public String value() {
-                            return "Center";
-                        }
-                    });
-                    break;
-                case UNKNOWN:
-                    telemetry.addData("Position",new Func<String>() {
-                        @Override public String value() {
-                            return "Unknown";
-                        }
-                    });
-                    break;
-            }
-            telemetry.update();
-        }
-
-        boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 28; // The distance to move forward afterward
-        if (isRed) {
-            // Move back
-            mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
-            backwardInch -= 3;
-        } else {
-            // Move forward
-            mecanumDrive.encoderDriveMove(0.3, direction.FORWARD, 3, 1);
-            backwardInch += 3;
-        }
-
-        robot.arm.setPosition(0.0);
-        mecanumDrive.encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
-
-        double distanceToTheRight = 9.5;
-        switch (column) {
-            case RIGHT:
-                distanceToTheRight = 1.5;
-                break;
-            case LEFT:
-                distanceToTheRight = 18.5;
-                break;
-            case CENTER:
-                distanceToTheRight = 9.5;
-                break;
-            case UNKNOWN:
-                break;
-        }
-
-        mecanumDrive.encoderDriveMove(0.5, direction.RIGHT, distanceToTheRight, 4);
-
-        mecanumDrive.gyroTurn(0.8, 180);
-
-        mecanumDrive.encoderDriveMove(0.7, direction.FORWARD, 9.5, 3);
-
-        robot.RHand.setPosition(0.8); //arm \ /
-        robot.LHand.setPosition(0.8);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 0.3)) {
-            telemetry.addData("Path", "Move arm apart: %2.5f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
-
-        mecanumDrive.encoderDriveMove(0.3, direction.BACKWARD, 4, 1);
-
-        mecanumDrive.encoderDriveMove(0.3, direction.FORWARD, 2, 1);
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        mecanumDrive.autonomous180(Team.RED);
     }
 
 //    String format(OpenGLMatrix transformationMatrix) {

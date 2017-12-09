@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,7 +36,7 @@ class MecanumDrive {
     private ElapsedTime runtime = new ElapsedTime();
 
     private static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
-    private static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
+    private static final double     P_TURN_COEFF            = 0.06;     // Larger is more responsive, but also less stable
 
     /** Constructor
      * @param robotInstance The robot instance initialized using method robot.init(hardwareMap)
@@ -49,7 +48,7 @@ class MecanumDrive {
         opMode = opModeInstance;
     }
 
-    void resetEncoders() {
+    private void resetEncoders() {
         // Send telemetry message to signify robot waiting
         opMode.telemetry.addData("Status", "Resetting Encoders");    //
         opMode.telemetry.update();
@@ -369,7 +368,7 @@ class MecanumDrive {
         runtime.reset();
         robot.LClaw.setPosition(0.5);
         robot.RClaw.setPosition(0.5);
-        while (opMode.opModeIsActive() && runtime.seconds() < 1.5) {
+        while (opMode.opModeIsActive() && runtime.seconds() < 2.5) {
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
@@ -390,8 +389,8 @@ class MecanumDrive {
         robot.RHand.setPosition(1.0);
         robot.LHand.setPosition(1.0);
 
-        robot.arm.setPosition(0.7);
-        liftMotorDrive(1.0, 2, 3); // Lift the block up 2 inches
+        robot.arm.setPosition(0.65);
+        liftMotorDrive(1.0, 2, 2); // Lift the block up 2 inches
         runtime.reset();
         while (opMode.opModeIsActive() && (runtime.seconds() < 1.0)) {
             opMode.telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
@@ -431,16 +430,16 @@ class MecanumDrive {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 35; // The distance to move forward afterward
+        double backwardInch = 28.2; // The distance to move forward/backward afterward
         switch (column) {
             case RIGHT:
-                backwardInch = 27;
+                backwardInch = 24;
                 break;
             case LEFT:
-                backwardInch = 41;
+                backwardInch = 37;
                 break;
             case CENTER:
-                backwardInch = 35;
+                backwardInch = 28.6;
                 break;
             case UNKNOWN:
                 break;
@@ -449,7 +448,7 @@ class MecanumDrive {
 
         if (isRed) {
             // Move back
-            if (team == Team.RED) {
+            if (team == Team.BLUE) {
                 encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
                 backwardInch -= 3;
             } else {
@@ -458,7 +457,7 @@ class MecanumDrive {
             }
         } else {
             // Move forward
-            if (team == Team.BLUE) {
+            if (team == Team.RED) {
                 encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
                 backwardInch -= 3;
             } else {
@@ -471,14 +470,16 @@ class MecanumDrive {
 
         switch (team) {
             case RED:
-                encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
+                encoderDriveMove(0.7, direction.BACKWARD, backwardInch, 5);
+                break;
             case BLUE:
-                encoderDriveMove(1.0, direction.FORWARD, backwardInch, 5);
+                encoderDriveMove(0.7, direction.FORWARD, backwardInch, 5);
+                break;
         }
 
-        gyroTurn(0.8, 88);
+        gyroTurn(0.8, 82);
 
-        encoderDriveMove(0.7, direction.FORWARD, 7, 3);
+        encoderDriveMove(0.7, direction.FORWARD, 10, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
@@ -488,15 +489,15 @@ class MecanumDrive {
             opMode.telemetry.update();
         }
 
-        encoderDriveMove(0.3, direction.BACKWARD, 4, 1);
+        encoderDriveMove(0.3, direction.BACKWARD, 6, 1);
 
-        encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+        encoderDriveMove(0.3, direction.FORWARD, 6, 1);
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();
     }
 
-    void autonomous180() {
+    void autonomous180(Team team) {
         resetEncoders();
         gyroInit();
 
@@ -542,6 +543,7 @@ class MecanumDrive {
         relicTemplate.setName("relicVuMarkTemplate");
 
         opMode.telemetry.addData(">", "Press Play to start");
+
         opMode.telemetry.update();
 
         opMode.waitForStart();
@@ -576,9 +578,9 @@ class MecanumDrive {
         robot.LHand.setPosition(1.0);
 
         robot.arm.setPosition(0.7);
-        liftMotorDrive(1.0, 4, 5); // Lift the block up 4 inches
+        liftMotorDrive(1.0, 2, 2); // Lift the block up 4 inches
         runtime.reset();
-        while (opMode.opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opMode.opModeIsActive() && (runtime.seconds() < 2.5)) {
             opMode.telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
             opMode.telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
             opMode.telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
@@ -616,15 +618,25 @@ class MecanumDrive {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 28; // The distance to move forward afterward
+        double backwardInch = 26; // The distance to move forward afterward
         if (isRed) {
             // Move back
-            encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
-            backwardInch -= 3;
+            if (team == Team.RED) {
+                encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+                backwardInch -= 3;
+            } else {
+                encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
+                backwardInch -= 3;
+            }
         } else {
             // Move forward
-            encoderDriveMove(0.3, direction.FORWARD, 3, 1);
-            backwardInch += 3;
+            if (team == Team.BLUE) {
+                encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+                backwardInch -= 3;
+            } else {
+                encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
+                backwardInch -= 3;
+            }
         }
 
         robot.arm.setPosition(0.0);
@@ -659,9 +671,9 @@ class MecanumDrive {
             opMode.telemetry.update();
         }
 
-        encoderDriveMove(0.3, direction.BACKWARD, 4, 1);
+        encoderDriveMove(0.3, direction.BACKWARD, 6, 1);
 
-        encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+        encoderDriveMove(0.3, direction.FORWARD, 6, 1);
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();
