@@ -30,35 +30,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This program moves robot forward 20 inches.
- */
 
-@Autonomous(name="MEncoderTest")
-@Disabled
-public class MecanumAutoEncoderTest extends LinearOpMode {
+@Autonomous(name="M Encoder Blue Left")
+public class MecanumAutoEncoderBlueLeft extends LinearOpMode {
 
     /* Declare OpMode members. */
-    Mecanum1 robot   = new Mecanum1();   // Use a Pushbot's hardware
-    private ElapsedTime runtime = new ElapsedTime();
-    /**
-     * Neverest 60:
-     * There is an encoder mounted to the back side of this motor.
-     * It is a 7 pulse per revolution (ppr), hall effect encoder.
-     * Since the motor's gearbox has a 60:1 reduction, then the NeverRest 60 output shaft provides 420 ppr.
-     */
-    static final double     COUNTS_PER_MOTOR_REV    = 1432;
-    static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    Mecanum1 robot   = new Mecanum1();   // Use Mecanum 1 robot
+    //private ElapsedTime runtime = new ElapsedTime();
+
+    // OpenGLMatrix lastLocation = null;
+    // int a;
 
     @Override
     public void runOpMode() {
@@ -70,25 +54,6 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
         robot.init(hardwareMap);
         MecanumDrive mecanumDrive = new MecanumDrive(robot, this);
 
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
-
-        robot.LFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.RFMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.LRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.RRMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-
-        robot.LFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        waitForStart();
-
-
-        // Step through each leg of the path
-        mecanumDrive.encoderDriveMove(DRIVE_SPEED, Direction.FORWARD, 20, 20);
+        mecanumDrive.autonomous180(Team.BLUE);
     }
 }

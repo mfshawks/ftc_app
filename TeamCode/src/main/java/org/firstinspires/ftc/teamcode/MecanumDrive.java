@@ -68,7 +68,7 @@ class MecanumDrive {
     }
 
     void encoderDriveMove(double speed,
-                          direction direction,
+                          Direction Direction,
                           double distanceInInch,
                           double timeoutS) {
         int newLeftRearTarget = 0;
@@ -79,7 +79,7 @@ class MecanumDrive {
 
         // Ensure that the opmode is still active
         if (opMode.opModeIsActive()) {
-            switch (direction) {
+            switch (Direction) {
                 case LEFT:
                     newLeftRearTarget = robot.LRMotor.getCurrentPosition() + (int)(distanceInInch * COUNTS_PER_INCH);
                     newRightRearTarget = robot.RRMotor.getCurrentPosition() - (int)(distanceInInch * COUNTS_PER_INCH);
@@ -227,7 +227,7 @@ class MecanumDrive {
     }
 
     /**
-     *  Method to spin on central axis to point in a new direction.
+     *  Method to spin on central axis to point in a new Direction.
      *  Move will stop if either of these conditions occur:
      *  1) Move gets to the heading (angle)
      *  2) Driver stops the opmode running.
@@ -449,19 +449,19 @@ class MecanumDrive {
         if (isRed) {
             // Move back
             if (team == Team.BLUE) {
-                encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
+                encoderDriveMove(0.3, Direction.BACKWARD, 3, 1);
                 backwardInch -= 3;
             } else {
-                encoderDriveMove(0.3, direction.FORWARD, 3, 1);
+                encoderDriveMove(0.3, Direction.FORWARD, 3, 1);
                 backwardInch += 3;
             }
         } else {
             // Move forward
             if (team == Team.RED) {
-                encoderDriveMove(0.3, direction.BACKWARD, 3, 1);
+                encoderDriveMove(0.3, Direction.BACKWARD, 3, 1);
                 backwardInch -= 3;
             } else {
-                encoderDriveMove(0.3, direction.FORWARD, 3, 1);
+                encoderDriveMove(0.3, Direction.FORWARD, 3, 1);
                 backwardInch += 3;
             }
         }
@@ -470,16 +470,16 @@ class MecanumDrive {
 
         switch (team) {
             case RED:
-                encoderDriveMove(0.7, direction.BACKWARD, backwardInch, 5);
+                encoderDriveMove(0.7, Direction.BACKWARD, backwardInch, 5);
                 break;
             case BLUE:
-                encoderDriveMove(0.7, direction.FORWARD, backwardInch, 5);
+                encoderDriveMove(0.7, Direction.FORWARD, backwardInch, 5);
                 break;
         }
 
         gyroTurn(0.8, 82);
 
-        encoderDriveMove(0.7, direction.FORWARD, 10, 3);
+        encoderDriveMove(0.7, Direction.FORWARD, 10, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
@@ -489,9 +489,9 @@ class MecanumDrive {
             opMode.telemetry.update();
         }
 
-        encoderDriveMove(0.3, direction.BACKWARD, 6, 1);
+        encoderDriveMove(0.3, Direction.BACKWARD, 6, 2);
 
-        encoderDriveMove(0.3, direction.FORWARD, 6, 1);
+        encoderDriveMove(0.3, Direction.FORWARD, 6, 2);
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();
@@ -551,7 +551,7 @@ class MecanumDrive {
 
         relicTrackables.activate();
 
-        RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
+        RelicRecoveryVuMark column = RelicRecoveryVuMark.CENTER;
 
         runtime.reset();
         robot.LClaw.setPosition(0.5);
@@ -622,46 +622,75 @@ class MecanumDrive {
         if (isRed) {
             // Move back
             if (team == Team.RED) {
-                encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+                encoderDriveMove(0.3, Direction.FORWARD, 2, 1);
                 backwardInch -= 3;
             } else {
-                encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
+                encoderDriveMove(0.3, Direction.BACKWARD, 2, 1);
                 backwardInch -= 3;
             }
         } else {
             // Move forward
             if (team == Team.BLUE) {
-                encoderDriveMove(0.3, direction.FORWARD, 2, 1);
+                encoderDriveMove(0.3, Direction.FORWARD, 2, 1);
                 backwardInch -= 3;
             } else {
-                encoderDriveMove(0.3, direction.BACKWARD, 2, 1);
+                encoderDriveMove(0.3, Direction.BACKWARD, 2, 1);
                 backwardInch -= 3;
             }
         }
 
         robot.arm.setPosition(0.0);
-        encoderDriveMove(1.0, direction.BACKWARD, backwardInch, 5);
 
-        double distanceToTheRight = 9.5;
-        switch (column) {
-            case RIGHT:
-                distanceToTheRight = 1.5;
+        switch (team) {
+            case BLUE:
+                encoderDriveMove(1.0, Direction.FORWARD, backwardInch, 5);
                 break;
-            case LEFT:
-                distanceToTheRight = 18.5;
-                break;
-            case CENTER:
-                distanceToTheRight = 9.5;
-                break;
-            case UNKNOWN:
+            case RED:
+                encoderDriveMove(1.0, Direction.BACKWARD, backwardInch, 5);
                 break;
         }
 
-        encoderDriveMove(0.5, direction.RIGHT, distanceToTheRight, 4);
+        double distanceToTheRight = 8;
+        switch (team) {
+            case RED:
+                switch (column) {
+                    case RIGHT:
+                        distanceToTheRight = 1.5;
+                        break;
+                    case LEFT:
+                        distanceToTheRight = 18.5;
+                        break;
+                    case CENTER:
+                        distanceToTheRight = 8.5;
+                        break;
+                    case UNKNOWN:
+                        break;
+                }
+                break;
+            case BLUE:
+                switch (column) {
+                    case RIGHT:
+                        distanceToTheRight = 9.5;
+                        break;
+                    case LEFT:
+                        distanceToTheRight = 0;
+                        break;
+                    case CENTER:
+                        distanceToTheRight = 5;
+                        break;
+                    case UNKNOWN:
+                        break;
+                }
+                break;
+        }
 
-        gyroTurn(0.8, 180);
+        encoderDriveMove(0.5, Direction.RIGHT, distanceToTheRight, 4);
 
-        encoderDriveMove(0.7, direction.FORWARD, 9.5, 3);
+        if (team == Team.RED) {
+            gyroTurn(0.8, 180);
+        }
+
+        encoderDriveMove(0.7, Direction.FORWARD, 9.5, 3);
 
         robot.RHand.setPosition(0.8); //arm \ /
         robot.LHand.setPosition(0.8);
@@ -671,9 +700,11 @@ class MecanumDrive {
             opMode.telemetry.update();
         }
 
-        encoderDriveMove(0.3, direction.BACKWARD, 6, 1);
+        encoderDriveMove(0.3, Direction.BACKWARD, 6, 1);
 
-        encoderDriveMove(0.3, direction.FORWARD, 6, 1);
+        encoderDriveMove(0.3, Direction.FORWARD, 6, 1);
+
+        encoderDriveMove(0.3, Direction.BACKWARD, 3, 1);
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();
