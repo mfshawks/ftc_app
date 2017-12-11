@@ -133,7 +133,7 @@ class MecanumDrive {
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    robot.LRMotor.isBusy() && robot.LFMotor.isBusy() && robot.RRMotor.isBusy() && robot.RFMotor.isBusy()) {
+                    robot.LRMotor.isBusy() && robot.LFMotor.isBusy() && robot.RRMotor.isBusy()) {
 
                 // Display it for the driver.
                 opMode.telemetry.addData("Path1",  "Running to %7d :%7d", newRightFrontTarget,  newLeftFrontTarget);
@@ -492,6 +492,8 @@ class MecanumDrive {
         encoderDriveMove(0.3, Direction.BACKWARD, 6, 2);
 
         encoderDriveMove(0.3, Direction.FORWARD, 6, 2);
+
+        encoderDriveMove(0.3, Direction.BACKWARD, 6, 2);
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();

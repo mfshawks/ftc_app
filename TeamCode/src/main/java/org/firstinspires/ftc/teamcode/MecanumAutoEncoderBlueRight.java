@@ -31,7 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
+//import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="M Encoder Blue Right")
@@ -39,7 +39,7 @@ public class MecanumAutoEncoderBlueRight extends LinearOpMode {
 
     /* Declare OpMode members. */
     Mecanum1 robot   = new Mecanum1();   // Use Mecanum 1 robot
-    private ElapsedTime runtime = new ElapsedTime();
+    //private ElapsedTime runtime = new ElapsedTime();
 
     // OpenGLMatrix lastLocation = null;
     // int a;
