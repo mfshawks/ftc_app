@@ -624,7 +624,7 @@ class MecanumDrive {
         }
 
         boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
-        double backwardInch = 26; // The distance to move forward afterward
+        double backwardInch = 27.5; // The distance to move forward afterward
         if (isRed) {
             // Move back
             if (team == Team.RED) {
