@@ -34,6 +34,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 /**
  * This OpMode uses the common HardwareK9bot class to define the devices on the robot.
  * All device access is managed through the HardwareK9bot class. (See this class for device names)
@@ -100,7 +106,28 @@ public class MecanumTeleopMrO126 extends LinearOpMode {
         robot.LRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RFMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.RRMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        parameters.vuforiaLicenseKey = "AQRju9v/////AAAAGYVVWUuAKEAPph69Ouwpq+8CMlbZi/zomEEP" +
+                "MAzyzRvCU9xj4/W+fiPSxFB1xv8BdlL55c6vD9wbMdHCPpMKKIqrNIJpXw06LgCF8xDeBXJEOEo" +
+                "oeyamPY8gLwHvkHDA0EEP52F+b7J1IDRbmJedlK6GdOIYFLiSBVISCf0+vdiWJvJiWiPTgggSiC" +
+                "RsV8IsK/OYwOqv5VoPv/m7no+VACFqPTcsKaAv5F49zqYXIncFbNKv9onHg5CEkZ4aMf7D/zcAp" +
+                "hCO5Gb3BN+DtyUmrHM4oALhoMFgqRw59plwzxfD45Uzfyu6Jn2k7LPTCqs94SpprMfOqOotLtBHx" +
+                "T19Rkl5toHI5buxqLlQDOX8y/jQ";
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; // Use back camera
+        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate");
+
         waitForStart();
+
+        relicTrackables.activate();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -190,9 +217,15 @@ public class MecanumTeleopMrO126 extends LinearOpMode {
             telemetry.addData("LRMotor",  "%03d", robot.LRMotor.getCurrentPosition());
             telemetry.addData("RFMotor",  "%03d", robot.RFMotor.getCurrentPosition());
             telemetry.addData("RRMotor",  "%03d", robot.RRMotor.getCurrentPosition());
+            telemetry.addData("leftClawDistance",  "%.2f", robot.leftClawDistanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("leftClawBlue",  "%03d", robot.leftClawColorSensor.blue());
+            telemetry.addData("rightClawRed",  "%03d", robot.rightClawColorSensor.red());
+            telemetry.addData("rightClawDistance",  "%.2f", robot.rightClawDistanceSensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("rightClawBlue",  "%03d", robot.rightClawColorSensor.blue());
+
             telemetry.update();
-            // Pause for 40 mS each cycle = update 25 times a second.
-            sleep(40);
+            // Pause for 20 mS each cycle = update 50 times a second.
+            sleep(20);
 
         }
     }

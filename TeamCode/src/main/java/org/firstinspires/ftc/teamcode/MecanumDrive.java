@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -37,6 +38,9 @@ class MecanumDrive {
 
     private static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     private static final double     P_TURN_COEFF            = 0.06;     // Larger is more responsive, but also less stable
+
+    private double[] distanceMap = new double[181];
+    //private double[] slopeMap = new double[181];
 
     /** Constructor
      * @param robotInstance The robot instance initialized using method robot.init(hardwareMap)
@@ -580,7 +584,7 @@ class MecanumDrive {
         robot.LHand.setPosition(1.0);
 
         robot.arm.setPosition(0.7);
-        liftMotorDrive(1.0, 2, 2); // Lift the block up 4 inches
+        liftMotorDrive(1.0, 2, 1.5); // Lift the block up 4 inches
         runtime.reset();
         while (opMode.opModeIsActive() && (runtime.seconds() < 2.5)) {
             opMode.telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
@@ -710,5 +714,271 @@ class MecanumDrive {
 
         opMode.telemetry.addData("Path", "Complete");
         opMode.telemetry.update();
+    }
+
+    void autonomous180II(Team team) {
+        resetEncoders();
+        gyroInit();
+
+        // Send telemetry message to indicate successful Encoder reset
+        opMode.telemetry.addData("Path0", "Starting at %7d :%7d",
+                robot.LRMotor.getCurrentPosition(),
+                robot.RRMotor.getCurrentPosition());
+        opMode.telemetry.update();
+
+        robot.LFMotor.setPower(0);
+        robot.RFMotor.setPower(0);
+        robot.LRMotor.setPower(0);
+        robot.RRMotor.setPower(0);
+        robot.arm.setPosition(0.0);
+        robot.RHand.setPosition(0.8); //arm \ /
+        robot.LHand.setPosition(0.8);
+        robot.LClaw.setPosition(0.0); //arm up
+        robot.RClaw.setPosition(0.0);
+
+        // Send telemetry message to signify robot waiting;
+        opMode.telemetry.addData("Status", "Ready to run");
+        opMode.telemetry.update();
+
+        // Wait for the game to start (driver presses PLAY)
+        opMode.waitForStart();
+
+        int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+
+        parameters.vuforiaLicenseKey = "AQRju9v/////AAAAGYVVWUuAKEAPph69Ouwpq+8CMlbZi/zomEEP" +
+                "MAzyzRvCU9xj4/W+fiPSxFB1xv8BdlL55c6vD9wbMdHCPpMKKIqrNIJpXw06LgCF8xDeBXJEOEo" +
+                "oeyamPY8gLwHvkHDA0EEP52F+b7J1IDRbmJedlK6GdOIYFLiSBVISCf0+vdiWJvJiWiPTgggSiC" +
+                "RsV8IsK/OYwOqv5VoPv/m7no+VACFqPTcsKaAv5F49zqYXIncFbNKv9onHg5CEkZ4aMf7D/zcAp" +
+                "hCO5Gb3BN+DtyUmrHM4oALhoMFgqRw59plwzxfD45Uzfyu6Jn2k7LPTCqs94SpprMfOqOotLtBHx" +
+                "T19Rkl5toHI5buxqLlQDOX8y/jQ";
+
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; // Use back camera
+        VuforiaLocalizer vuforia = ClassFactory.createVuforiaLocalizer(parameters);
+
+        VuforiaTrackables relicTrackables = vuforia.loadTrackablesFromAsset("RelicVuMark");
+        VuforiaTrackable relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate");
+
+        opMode.telemetry.addData(">", "Press Play to start");
+
+        opMode.telemetry.update();
+
+        opMode.waitForStart();
+//>>>>>>>>>>>>>>>>>>>>>>>>>>START>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+        relicTrackables.activate();
+
+        RelicRecoveryVuMark column = RelicRecoveryVuMark.UNKNOWN;
+
+        runtime.reset();
+        robot.LClaw.setPosition(0.5);
+        robot.RClaw.setPosition(0.5);
+        while (opMode.opModeIsActive() && runtime.seconds() < 1.5) {
+            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+
+                /* Found an instance of the template. In the actual game, you will probably
+                 * loop until this condition occurs, then move on to act accordingly depending
+                 * on which VuMark was visible. */
+                opMode.telemetry.addData("VuMark", "%s visible", vuMark);
+                column = vuMark;
+
+                break; // Break the while loop after the vuMark is found
+            } else {
+                opMode.telemetry.addData("VuMark", "not visible");
+            }
+
+            opMode.telemetry.update();
+        }
+
+        robot.RHand.setPosition(1.0);
+        robot.LHand.setPosition(1.0);
+
+        robot.arm.setPosition(0.7);
+        liftMotorDrive(1.0, 2, 2); // Lift the block up 4 inches
+        runtime.reset();
+        while (opMode.opModeIsActive() && (runtime.seconds() < 1.0)) {
+            opMode.telemetry.addData("Path", "Move sensor arm: %2.5f S Elapsed", runtime.seconds());
+            opMode.telemetry.addData("Red", String.valueOf(robot.armColorSensor.red()));
+            opMode.telemetry.addData("Blue", String.valueOf(robot.armColorSensor.blue()));
+            switch (column) {
+                case RIGHT:
+                    opMode.telemetry.addData("Position", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return "Right";
+                        }
+                    });
+                    break;
+                case LEFT:
+                    opMode.telemetry.addData("Position", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return "Left";
+                        }
+                    });
+                    break;
+                case CENTER:
+                    opMode.telemetry.addData("Position", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return "Center";
+                        }
+                    });
+                    break;
+                case UNKNOWN:
+                    opMode.telemetry.addData("Position", new Func<String>() {
+                        @Override
+                        public String value() {
+                            return "Unknown";
+                        }
+                    });
+                    break;
+            }
+            opMode.telemetry.update();
+        }
+
+        boolean isRed = (robot.armColorSensor.red() > robot.armColorSensor.blue());
+        double backwardInch = 25; // The distance to move forward afterward
+        if (isRed) {
+            // Move back
+            if (team == Team.RED) {
+                encoderDriveMove(0.3, Direction.FORWARD, 2, 1);
+                backwardInch -= 3;
+            } else {
+                encoderDriveMove(0.3, Direction.BACKWARD, 2, 1);
+                backwardInch -= 3;
+            }
+        } else {
+            // Move forward
+            if (team == Team.BLUE) {
+                encoderDriveMove(0.3, Direction.FORWARD, 2, 1);
+                backwardInch -= 3;
+            } else {
+                encoderDriveMove(0.3, Direction.BACKWARD, 2, 1);
+                backwardInch -= 3;
+            }
+        }
+
+        robot.arm.setPosition(0.0);
+
+        switch (team) {
+            case BLUE:
+                encoderDriveMove(1.0, Direction.FORWARD, backwardInch, 5);
+                break;
+            case RED:
+                encoderDriveMove(1.0, Direction.BACKWARD, backwardInch, 5);
+                break;
+        }
+
+//        encoderDriveMove(0.5, Direction.RIGHT, 6, 4);
+//
+//        for (int angle=0; angle<180; angle++) {
+//            robot.radarArm.setPosition(angle/180);
+//            opMode.sleep(20);
+//            distanceMap[angle] = robot.radarDistanceSensor.getDistance(DistanceUnit.INCH);
+//        }
+
+        if (team == Team.RED) {
+            gyroTurn(0.8, 180);
+        }
+
+        int moveCount = 2;
+        switch (column) {
+            case LEFT:
+                moveCount = 3;
+                break;
+            case CENTER:
+                moveCount = 2;
+                break;
+            case RIGHT:
+                moveCount = 1;
+                break;
+            case UNKNOWN:
+                moveCount = 2;
+                break;
+        }
+
+        for (int i=1; i==moveCount; i++) {
+            moveUntilSeesRibs(Direction.LEFT);
+        }
+
+        encoderDriveMove(0.7, Direction.FORWARD, 9.5, 3);
+
+        robot.RHand.setPosition(0.8); //arm \ /
+        robot.LHand.setPosition(0.8);
+        runtime.reset();
+        while (opMode.opModeIsActive() && (runtime.seconds() < 0.3)) {
+            opMode.telemetry.addData("Path", "Move arm apart: %2.5f S Elapsed", runtime.seconds());
+            opMode.telemetry.update();
+        }
+
+        encoderDriveMove(0.3, Direction.BACKWARD, 6, 1);
+
+        encoderDriveMove(0.3, Direction.FORWARD, 6, 1);
+
+        encoderDriveMove(0.3, Direction.BACKWARD, 3, 1);
+
+        opMode.telemetry.addData("Path", "Complete");
+        opMode.telemetry.update();
+    }
+
+    void move(Direction direction, double power) {
+        switch (direction) {
+            case LEFT:
+                robot.LRMotor.setPower(power);
+                robot.RRMotor.setPower(-power);
+                robot.LFMotor.setPower(-power);
+                robot.RFMotor.setPower(power);
+                break;
+            case RIGHT:
+                robot.LRMotor.setPower(-power);
+                robot.RRMotor.setPower(power);
+                robot.LFMotor.setPower(power);
+                robot.RFMotor.setPower(-power);
+                break;
+            case BACKWARD:
+                robot.LRMotor.setPower(-power);
+                robot.RRMotor.setPower(-power);
+                robot.LFMotor.setPower(-power);
+                robot.RFMotor.setPower(-power);
+                break;
+            case FORWARD:
+                robot.LRMotor.setPower(power);
+                robot.RRMotor.setPower(power);
+                robot.LFMotor.setPower(power);
+                robot.RFMotor.setPower(power);
+                break;
+        }
+    }
+
+    private void stopWheelMotors() {
+        robot.LRMotor.setPower(0);
+        robot.RRMotor.setPower(0);
+        robot.LFMotor.setPower(0);
+        robot.RFMotor.setPower(0);
+    }
+
+    private void moveUntilSeesRibs(Direction direction) {
+        move(direction, 0.3);
+        while (isSeeingRibs() && opMode.opModeIsActive()) {
+            opMode.telemetry.addData("Path", "Moving sideways until doesn't see ribs");
+            opMode.telemetry.update();
+        }
+
+        while (!isSeeingRibs() && opMode.opModeIsActive()) {
+            opMode.telemetry.addData("Path", "Moving sideways until sees ribs");
+            opMode.telemetry.update();
+        }
+
+        stopWheelMotors();
+        opMode.sleep(100);
+    }
+
+    private boolean isSeeingRibs() {
+        return ((Math.abs(robot.rightClawColorSensor.blue() - robot.rightClawColorSensor.red()) > 55)
+                && (Math.abs(robot.leftClawColorSensor.blue() - robot.leftClawColorSensor.red()) > 55));
     }
 }

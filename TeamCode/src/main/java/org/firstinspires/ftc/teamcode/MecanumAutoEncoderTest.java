@@ -69,7 +69,7 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
          */
         robot.init(hardwareMap);
         MecanumDrive mecanumDrive = new MecanumDrive(robot, this);
-
+        mecanumDrive.gyroInit();
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -89,6 +89,8 @@ public class MecanumAutoEncoderTest extends LinearOpMode {
 
 
         // Step through each leg of the path
-        mecanumDrive.encoderDriveMove(DRIVE_SPEED, Direction.FORWARD, 20, 20);
+        mecanumDrive.encoderDriveMove(DRIVE_SPEED, Direction.FORWARD, 21, 5);
+        mecanumDrive.gyroTurn(0.6, 180);
+        mecanumDrive.encoderDriveMove(0.3, Direction.FORWARD, 6, 5);
     }
 }
