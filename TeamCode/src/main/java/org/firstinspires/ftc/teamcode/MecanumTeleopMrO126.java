@@ -217,11 +217,11 @@ public class MecanumTeleopMrO126 extends LinearOpMode {
             telemetry.addData("LRMotor",  "%03d", robot.LRMotor.getCurrentPosition());
             telemetry.addData("RFMotor",  "%03d", robot.RFMotor.getCurrentPosition());
             telemetry.addData("RRMotor",  "%03d", robot.RRMotor.getCurrentPosition());
-            telemetry.addData("leftClawDistance",  "%.2f", robot.leftClawDistanceSensor.getDistance(DistanceUnit.INCH));
-            telemetry.addData("leftClawBlue",  "%03d", robot.leftClawColorSensor.blue());
-            telemetry.addData("rightClawRed",  "%03d", robot.rightClawColorSensor.red());
-            telemetry.addData("rightClawDistance",  "%.2f", robot.rightClawDistanceSensor.getDistance(DistanceUnit.INCH));
-            telemetry.addData("rightClawBlue",  "%03d", robot.rightClawColorSensor.blue());
+//            telemetry.addData("leftClawDistance",  "%.2f", robot.leftClawDistanceSensor.getDistance(DistanceUnit.INCH));
+//            telemetry.addData("leftClawBlue",  "%03d", robot.leftClawColorSensor.blue());
+//            telemetry.addData("rightClawRed",  "%03d", robot.rightClawColorSensor.red());
+//            telemetry.addData("rightClawDistance",  "%.2f", robot.rightClawDistanceSensor.getDistance(DistanceUnit.INCH));
+//            telemetry.addData("rightClawBlue",  "%03d", robot.rightClawColorSensor.blue());
 
             telemetry.update();
             // Pause for 20 mS each cycle = update 50 times a second.

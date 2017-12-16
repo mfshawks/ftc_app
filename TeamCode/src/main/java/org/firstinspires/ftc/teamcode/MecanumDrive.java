@@ -649,10 +649,10 @@ class MecanumDrive {
 
         switch (team) {
             case BLUE:
-                encoderDriveMove(1.0, Direction.FORWARD, backwardInch, 5);
+                encoderDriveMove(0.8, Direction.FORWARD, backwardInch, 5);
                 break;
             case RED:
-                encoderDriveMove(1.0, Direction.BACKWARD, backwardInch, 5);
+                encoderDriveMove(0.8, Direction.BACKWARD, backwardInch, 5);
                 break;
         }
 
@@ -679,7 +679,7 @@ class MecanumDrive {
                         distanceToTheRight = 9.5;
                         break;
                     case LEFT:
-                        distanceToTheRight = 0;
+                        distanceToTheRight = 0.5;
                         break;
                     case CENTER:
                         distanceToTheRight = 5;
@@ -901,9 +901,9 @@ class MecanumDrive {
                 break;
         }
 
-        for (int i=1; i==moveCount; i++) {
-            moveUntilSeesRibs(Direction.LEFT);
-        }
+//        for (int i=1; i==moveCount; i++) {
+//            moveUntilSeesRibs(Direction.LEFT);
+//        }
 
         encoderDriveMove(0.7, Direction.FORWARD, 9.5, 3);
 
@@ -961,24 +961,24 @@ class MecanumDrive {
         robot.RFMotor.setPower(0);
     }
 
-    private void moveUntilSeesRibs(Direction direction) {
-        move(direction, 0.3);
-        while (isSeeingRibs() && opMode.opModeIsActive()) {
-            opMode.telemetry.addData("Path", "Moving sideways until doesn't see ribs");
-            opMode.telemetry.update();
-        }
-
-        while (!isSeeingRibs() && opMode.opModeIsActive()) {
-            opMode.telemetry.addData("Path", "Moving sideways until sees ribs");
-            opMode.telemetry.update();
-        }
-
-        stopWheelMotors();
-        opMode.sleep(100);
-    }
-
-    private boolean isSeeingRibs() {
-        return ((Math.abs(robot.rightClawColorSensor.blue() - robot.rightClawColorSensor.red()) > 55)
-                && (Math.abs(robot.leftClawColorSensor.blue() - robot.leftClawColorSensor.red()) > 55));
-    }
+//    private void moveUntilSeesRibs(Direction direction) {
+//        move(direction, 0.3);
+//        while (isSeeingRibs() && opMode.opModeIsActive()) {
+//            opMode.telemetry.addData("Path", "Moving sideways until doesn't see ribs");
+//            opMode.telemetry.update();
+//        }
+//
+//        while (!isSeeingRibs() && opMode.opModeIsActive()) {
+//            opMode.telemetry.addData("Path", "Moving sideways until sees ribs");
+//            opMode.telemetry.update();
+//        }
+//
+//        stopWheelMotors();
+//        opMode.sleep(100);
+//    }
+//
+//    private boolean isSeeingRibs() {
+//        return ((Math.abs(robot.rightClawColorSensor.blue() - robot.rightClawColorSensor.red()) > 55)
+//                && (Math.abs(robot.leftClawColorSensor.blue() - robot.leftClawColorSensor.red()) > 55));
+//    }
 }

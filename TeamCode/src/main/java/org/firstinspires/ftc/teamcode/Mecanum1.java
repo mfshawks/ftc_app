@@ -72,10 +72,10 @@ public class Mecanum1 {
     public ColorSensor armColorSensor = null;
     public DistanceSensor armDistanceSensor = null;
     //public DistanceSensor radarDistanceSensor = null;
-    public ColorSensor leftClawColorSensor = null;
-    public ColorSensor rightClawColorSensor = null;
-    public DistanceSensor leftClawDistanceSensor = null;
-    public DistanceSensor rightClawDistanceSensor = null;
+//    public ColorSensor leftClawColorSensor = null;
+//    public ColorSensor rightClawColorSensor = null;
+//    public DistanceSensor leftClawDistanceSensor = null;
+//    public DistanceSensor rightClawDistanceSensor = null;
     public BNO055IMU gyro = null;
 
 
@@ -146,10 +146,10 @@ public class Mecanum1 {
         gyro = hwMap.get(BNO055IMU.class, "imu");
 
         armColorSensor = hwMap.get(ColorSensor.class, "acs");
-        leftClawColorSensor = hwMap.get(ColorSensor.class, "LCS");
-        rightClawColorSensor = hwMap.get(ColorSensor.class, "RCS");
-        leftClawDistanceSensor = hwMap.get(DistanceSensor.class, "LCS");
-        rightClawDistanceSensor = hwMap.get(DistanceSensor.class, "RCS");
+//        leftClawColorSensor = hwMap.get(ColorSensor.class, "LCS");
+//        rightClawColorSensor = hwMap.get(ColorSensor.class, "RCS");
+//        leftClawDistanceSensor = hwMap.get(DistanceSensor.class, "LCS");
+//        rightClawDistanceSensor = hwMap.get(DistanceSensor.class, "RCS");
         armDistanceSensor = hwMap.get(DistanceSensor.class, "acs");
 
         //radarDistanceSensor = hwMap.get(DistanceSensor.class, "rds");
