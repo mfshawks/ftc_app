@@ -1,3 +1,9 @@
+package org.firstinspires.ftc.teamcode;
+
+/**
+ * Created by David Dai on 10/22/18.
+ */
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -27,14 +33,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
-
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 
 /**
  * This is NOT an opmode.
@@ -54,28 +56,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  *   As the arm servo approaches 0, the arm position moves up (away from the floor).
  *   As the claw servo approaches 0, the claw opens up (drops the game element).
  */
-public class Bigwheels {
+public class Mecanum19 {
     /* Public OpMode members. */
-    public DcMotor leftM   = null;
-    public DcMotor rightM  = null;
-   // public DcMotor  liftM   = null;
-    public Servo arm         = null;
-    //public Servo    LClaw        = null;
-    //public Servo    RClaw        = null;
+    public DcMotor  LFMotor = null;
+    public DcMotor  RFMotor = null;
+    public DcMotor  LRMotor = null;
+    public DcMotor  RRMotor = null;
+    public DcMotor  liftM   = null;
+    // public Servo    arm         = null;
+//    public Servo    Lclaw        = null;
+//    public Servo    Rclaw        = null;
 
     //public final static double ARM_HOME = 0.0; // 0 -> up; 0.7 -> Right
-    //public final static double CLAW_HOME = 0.3;
+    public final static double CLAW_HOME = 0.3;
     //public final static double ARM_MIN_RANGE  = 0.00;
     //public final static double ARM_MAX_RANGE  = 0.70;
-    //public final static double CLAW_MIN_RANGE  = 0.30;
-    //public final static double CLAW_MAX_RANGE  = 0.7;
+    public final static double CLAW_MIN_RANGE  = 0.30;
+    public final static double CLAW_MAX_RANGE  = 0.7;
 
     /* Local OpMode members. */
     HardwareMap hwMap  = null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public Bigwheels() {
+    public Mecanum19() {
     }
 
     /* Initialize standard Hardware interfaces */
@@ -84,31 +88,42 @@ public class Bigwheels {
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftM  = hwMap.get(DcMotor.class, "leftM");
-        rightM = hwMap.get(DcMotor.class, "rightM");
-        leftM.setDirection(DcMotor.Direction.REVERSE);
 
-      //  liftM  = hwMap.get(DcMotor.class, "liftM");
+        LFMotor = hwMap.get(DcMotor.class, "LFMotor");
+        RFMotor = hwMap.get(DcMotor.class, "RFMotor");
+        LFMotor.setDirection(DcMotor.Direction.REVERSE);
+        LRMotor = hwMap.get(DcMotor.class, "LRMotor");
+        RRMotor = hwMap.get(DcMotor.class, "RRMotor");
+        LRMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        liftM  = hwMap.get(DcMotor.class, "liftM");
         // Set all motors to zero power
-        leftM.setPower(0);
-        rightM.setPower(0);
+        LFMotor.setPower(0);
+        RFMotor.setPower(0);
+        LRMotor.setPower(0);
+        RRMotor.setPower(0);
 
-        //liftM.setPower(0);
+        liftM.setPower(0);
 
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RFMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        LRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        RRMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         //liftM.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
         //arm  = hwMap.get(Servo.class, "arm");
-        //LClaw = hwMap.get(Servo.class, "LClaw");
-        //RClaw = hwMap.get(Servo.class, "RClaw");
-        //arm.setPosition(ARM_HOME);
-        //LClaw.setDirection(Servo.Direction.REVERSE);
-        //LClaw.setPosition(CLAW_HOME);
-        //RClaw.setPosition(CLAW_HOME);
+//        Lclaw = hwMap.get(Servo.class, "Lclaw");
+//        Rclaw = hwMap.get(Servo.class, "Rclaw");
+//        //arm.setPosition(ARM_HOME);
+//        Lclaw.setDirection(Servo.Direction.REVERSE);
+//        Lclaw.setPosition(CLAW_HOME);
+//        Rclaw.setPosition(CLAW_HOME);
     }
 }
+
+
